@@ -1,0 +1,6 @@
+<?page title="TableGame" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="TableGame" border="normal">
+New Content Here!
+</window>
+</zk>

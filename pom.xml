@@ -89,10 +89,9 @@
             <version>1.0.19</version>
         </dependency>
         <!-- ZK Charts -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.zkoss.chart</groupId>
             <artifactId>zkcharts</artifactId>
-            <!-- <version>3.0.0-Eval</version> -->
             <version>3.0.0</version>
             <exclusions>
                <exclusion>
@@ -100,7 +99,7 @@
                   <artifactId>commons-logging</artifactId>
                </exclusion>
             </exclusions>   
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>

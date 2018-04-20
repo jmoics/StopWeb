@@ -1,9 +1,11 @@
-package pe.com.lycsoftware.model;
+package pe.com.lycsoftware.game;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class User
+import pe.com.lycsoftware.model.Row;
+
+public class GameUser
     implements Serializable
 {
     /**

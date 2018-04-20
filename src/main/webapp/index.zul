@@ -1,0 +1,27 @@
+<?page title="Login" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="Login" border="normal" apply="pe.com.lycsoftware.controller.IndexCtrl">
+	<grid id="loginGrid">
+        <columns>
+            <column hflex="1" />
+            <column hflex="1" />
+        </columns>
+        <rows>
+            <row>
+                <label value="Nombre"></label>
+                <textbox id="txtName" style="width:160px;"
+                    constraint="no empty" />
+            </row>
+            <row>
+                <label value="Chat Name"></label>
+                <textbox id="txtGameRoom" style="width:160px;"
+                    constraint="no empty" />
+                </hbox>
+            </row>
+            <row>
+            	<button id="btnLogin" label="Entrar" />
+            </row>
+        </rows>
+    </grid>
+</window>
+</zk>
