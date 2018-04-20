@@ -1,15 +1,14 @@
 package pe.com.lycsoftware.controller;
 
+import javax.mail.Message;
+
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import chat.ChatRoom;
-import chat.ChatUser;
-import chat.Message;
-import chat.MessageBoard;
+import pe.com.lycsoftware.game.GameBoard;
 import pe.com.lycsoftware.game.GameRoom;
 import pe.com.lycsoftware.game.GameUser;
 
@@ -23,13 +22,14 @@ public class IndexCtrl
 	private GameRoom gameRoom;
 	private GameUser gameUser;
 	private String userName;
+	private GameBoard gameBoard;
 	
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		// TODO Auto-generated method stub
 		super.doAfterCompose(comp);
 	}
-	
+
 	public void login() {
 		this.userName = this.txtName.getValue();
 		gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(this.txtGameRoom.getValue());
@@ -42,14 +42,14 @@ public class IndexCtrl
 			//initialize
 			this.getSelf().getDesktop().enableServerPush(true);
 
-			gameUser = new GameUser(gameRoom, userName, desktop, _IMEnabled);
+			gameUser = new GameUser(gameRoom, userName, this.getSelf().getDesktop());
 			//broadcast
-			gameRoom.broadcast(new Message(userName
+			/*gameRoom.broadcast(new Message(userName
 					+ " has joined this chatroom", userName, true));
-						_chatUser.start();
+						_chatUser.start();*/
 			//set the MessageBoard to the session
-			_msgBoard = new MessageBoard(_chatUser, gameRoom);
-			Sessions.getCurrent().setAttribute("msgBoard", _msgBoard);
+			gameBoard = new GameBoard(gameUser, gameRoom);
+			Sessions.getCurrent().setAttribute("gameBoard", gameBoard);
 			//welcome message
 			Message msg = new Message("Welcome " + userName, userName, true);
 			_msgBoard.setMessage(msg);

@@ -1,9 +1,8 @@
 package pe.com.lycsoftware.game;
 
 import java.io.Serializable;
-import java.util.List;
 
-import pe.com.lycsoftware.model.Row;
+import org.zkoss.zk.ui.Desktop;
 
 public class GameUser
     implements Serializable
@@ -12,40 +11,58 @@ public class GameUser
      * 
      */
     private static final long serialVersionUID = 7202998643864819228L;
-    private String name;
+    private String userName;
+    private GameRoom gameRoom;
+    private Desktop desktop;
     private Integer score;
-    private List<Row> table;
-    
-    public String getName()
+
+    public GameUser(GameRoom _gameRoom,
+                    String _userName,
+                    Desktop _desktop)
     {
-        return name;
+        this.userName = _userName;
+        this.gameRoom = _gameRoom;
+        this.desktop = _desktop;
     }
-    
-    public void setName(String name)
+
+    public String getUserName()
     {
-        this.name = name;
+        return userName;
     }
-    
+
+    public void setUserName(String userName)
+    {
+        this.userName = userName;
+    }
+
     public Integer getScore()
     {
         return score;
     }
-    
+
     public void setScore(Integer score)
     {
         this.score = score;
     }
 
-    
-    public List<Row> getTable()
+    public GameRoom getGameRoom()
     {
-        return table;
+        return gameRoom;
     }
 
-    
-    public void setTable(List<Row> table)
+    public void setGameRoom(GameRoom gameRoom)
     {
-        this.table = table;
+        this.gameRoom = gameRoom;
     }
-    
+
+    public Desktop getDesktop()
+    {
+        return desktop;
+    }
+
+    public void setDesktop(Desktop desktop)
+    {
+        this.desktop = desktop;
+    }
+
 }
