@@ -5,11 +5,18 @@ import java.util.List;
 
 public class GameRoom
 {
+    private String name;
     private List<GameUser> gameUsers;
 
-    public GameRoom()
+    public GameRoom(String _name)
     {
+        this.name = _name;
         this.gameUsers = new ArrayList<GameUser>();
+    }
+    
+    public String getName()
+    {
+        return name;
     }
 
     /**

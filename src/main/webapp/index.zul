@@ -13,13 +13,12 @@
                     constraint="no empty" />
             </row>
             <row>
-                <label value="Chat Name"></label>
+                <label value="Sala de Juego"></label>
                 <textbox id="txtGameRoom" style="width:160px;"
                     constraint="no empty" />
-                </hbox>
             </row>
             <row>
-            	<button id="btnLogin" label="Entrar" />
+                <button id="btnLogin" label="Entrar" />
             </row>
         </rows>
     </grid>
