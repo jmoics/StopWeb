@@ -9,5 +9,7 @@
     </button>
     <button id="btnStop" label="Stop" visible="false">
     </button>
+    <listbox id="lstMessages">
+    </listbox>
 </window>
 </zk>

@@ -14,6 +14,19 @@ public class GameRoom
         this.gameUsers = new ArrayList<GameUser>();
     }
     
+    /**
+     * Task: Send messages to all chatUsers except sender.
+     * @param message
+     */
+    public void broadcast(GameMessage msg) {
+        synchronized (this.gameUsers) {
+            for (GameUser gameUser : this.gameUsers)
+                if (gameUser.getUserName().compareTo(msg.getSender()) != 0) {
+                    gameUser.addGameMessage(msg);
+                }
+        }
+    }
+    
     public String getName()
     {
         return name;

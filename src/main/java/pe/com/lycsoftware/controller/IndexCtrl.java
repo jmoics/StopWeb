@@ -10,6 +10,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import pe.com.lycsoftware.game.GameBoard;
+import pe.com.lycsoftware.game.GameMessage;
 import pe.com.lycsoftware.game.GameRoom;
 import pe.com.lycsoftware.game.GameUser;
 
@@ -51,16 +52,14 @@ public class IndexCtrl
 
             gameUser = new GameUser(gameRoom, userName, this.getSelf().getDesktop());
             // broadcast
-            /*
-             * gameRoom.broadcast(new Message(userName +
-             * " has joined this chatroom", userName, true)); _chatUser.start();
-             */
+            gameRoom.broadcast(new GameMessage(userName + " has joined this gameroom", userName)); 
+            gameUser.start();
             // set the MessageBoard to the session
             gameBoard = new GameBoard(gameUser, gameRoom);
             Sessions.getCurrent().setAttribute("gameBoard", gameBoard);
             // welcome message
-            // Message msg = new Message("Welcome " + userName, userName, true);
-            // _msgBoard.setMessage(msg);
+            //GameMessage msg = new GameMessage("Welcome " + userName, userName, true);
+            //gameBoard.setMessage(msg);
             // refresh UI
             // displayChatGrid();
             Executions.sendRedirect("tableGame.zul");
