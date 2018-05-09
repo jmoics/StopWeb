@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="max.retention.days" value="60" />
+    <shutdownHook/>
+    <!-- system_home debe ser seteada como variable de inicio de java, en el tomcat externo meterlo en el setenv -->
+    <!-- <property name="system_home" value="C:/logs" /> -->
+    <!-- <property name="system_home" value="/logs" /> --> 
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level {%thread} [%logger{20}] : %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+    </appender>
+
+    <appender name="FILE-LYCSOFTWARE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${system_home}/lycsoftware.log</file>
+        <append>true</append>
+        <encoder>
+            <charset>utf-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} %-5level {%thread} [%logger{40}] : %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${system_home}/archive/lycsoftware-%d{yyyyMMdd}-%i.log.zip</fileNamePattern> 
+            <maxHistory>${max.retention.days}</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1MB</maxFileSize> 
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    
+    <logger name="pe.com.lycsoftware" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE-LYCSOFTWARE" />
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.springframework" level="INFO" additivity="false">
+        <appender-ref ref="FILE-LYCSOFTWARE" />
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.zkoss" level="INFO" additivity="false">
+        <appender-ref ref="FILE-LYCSOFTWARE" />
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <root level="INFO">
+        <!-- <appender-ref ref="CONSOLE" /> -->
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

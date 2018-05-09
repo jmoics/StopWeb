@@ -19,7 +19,7 @@ public class GameUser extends Thread
     private static final Logger LOGGER = LoggerFactory.getLogger(GameUser.class);
     private String userName;
     private GameRoom gameRoom;
-    private Desktop desktop;
+    private final Desktop desktop;
     private Integer score;
     private boolean finishGame;
     //private boolean endTurn;
@@ -80,11 +80,11 @@ public class GameUser extends Thread
             LOGGER.info("processing turn: "+ this.gameMessage.getContent());
             /*HashMap<String, Message> msgs = new HashMap<String, Message>();
             msgs.put("msg",_msg);*/
-            Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
+            Events.postEvent(new Event("onBroadcast", this.desktop.getPage("mainPage").getFellow("winTabGam"), this.gameMessage));
             this.gameMessage = null;
         } else {
             LOGGER.info("processing message: "+ this.gameMessage.getContent());
-            Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
+            Events.postEvent(new Event("onBroadcast", this.desktop.getPage("mainPage").getFellow("winTabGam"), this.gameMessage));
             this.gameMessage = null;
         }
     }
@@ -105,11 +105,6 @@ public class GameUser extends Thread
         return userName;
     }
 
-    public void setUserName(String userName)
-    {
-        this.userName = userName;
-    }
-
     public Integer getScore()
     {
         return score;
@@ -125,21 +120,11 @@ public class GameUser extends Thread
         return gameRoom;
     }
 
-    public void setGameRoom(GameRoom gameRoom)
-    {
-        this.gameRoom = gameRoom;
-    }
-
     public Desktop getDesktop()
     {
         return desktop;
     }
 
-    public void setDesktop(Desktop desktop)
-    {
-        this.desktop = desktop;
-    }
-    
     /*public void setEndTurn()
     {
         this.endTurn = true;

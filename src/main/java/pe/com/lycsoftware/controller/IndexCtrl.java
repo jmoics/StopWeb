@@ -6,6 +6,7 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -23,6 +24,8 @@ public class IndexCtrl
     private Textbox txtGameRoom;
     @Wire
     private Button btnLogin;
+    @Wire
+    private Grid loginGrid;
     private GameRoom gameRoom;
     private GameUser gameUser;
     private String userName;
@@ -62,7 +65,10 @@ public class IndexCtrl
             //gameBoard.setMessage(msg);
             // refresh UI
             // displayChatGrid();
-            Executions.sendRedirect("tableGame.zul");
+            //Executions.sendRedirect("tableGame.zul");
+            Executions.createComponents("tableGame.zul", this.getSelf(), null);
+            this.loginGrid.setVisible(false);
+            this.getSelf().setBorder(false);
             // appendMessage(msg);
         } else {
             alert("This username is already in use. Please choose another.");

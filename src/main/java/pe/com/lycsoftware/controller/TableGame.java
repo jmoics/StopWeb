@@ -72,7 +72,8 @@ public class TableGame
      * @param event
      * @throws InterruptedException
      */
-    public void onBroadcast(Event event) throws InterruptedException {
+    @Listen("onBroadcast = #winTabGam")
+    public void onBroadcast(Event event) {
         final GameMessage msg = (GameMessage) event.getData();
         //if a user is entering or leaving chatroom
         if(!msg.isEndTurn()){
