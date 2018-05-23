@@ -27,6 +27,13 @@ public class GameRoom
         }
     }
     
+    public void broadcastAll(GameMessage msg) {
+        synchronized (this.gameUsers) {
+            for (GameUser gameUser : this.gameUsers)
+                gameUser.addGameMessage(msg);
+        }
+    }
+    
     public String getName()
     {
         return name;

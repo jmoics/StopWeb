@@ -2,6 +2,8 @@ package pe.com.lycsoftware.controller;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
@@ -27,6 +29,7 @@ import pe.com.lycsoftware.util.Constants;
 public class TableGame
     extends SelectorComposer<Window>
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TableGame.class);
     @Wire
     private Grid grdTableGame;
     private GameBoard gameBoard;
@@ -67,10 +70,16 @@ public class TableGame
             row.appendChild(label);
             for (Category cat : this.gameBoard.getCategories()) {
                 Textbox textCat = new Textbox();
+                textCat.setId(cat.getName() + "_1");
+                textCat.setDisabled(true);
                 row.appendChild(textCat);
             }
         }
         this.grdTableGame.getRows().appendChild(row);
+    }
+    
+    private void rebuildGameBoard() {
+        
     }
     
     /**
@@ -82,33 +91,54 @@ public class TableGame
     public void onBroadcast(Event event) {
         final GameMessage msg = (GameMessage) event.getData();
         //if a user is entering or leaving chatroom
-        if(!msg.isEndTurn()){
-            if (this.grdTableGame.getRows().getChildren().size() > 0) {
-                Row row = (Row) this.grdTableGame.getRows().getLastChild();
-                for (Component comp : row.getChildren()) {
-                    if (comp instanceof Textbox) {
-                        ((Textbox) comp).setDisabled(true);
+        switch (msg.getStatus()) {
+            case Constants.START_GAME:
+                LOGGER.info("processing start turn: " + msg.getContent());
+                if (this.grdTableGame.getRows().getChildren().size() > 0) {
+                    Row row = (Row) this.grdTableGame.getRows().getLastChild();
+                    for (Component comp : row.getChildren()) {
+                        if (comp instanceof Textbox) {
+                            ((Textbox) comp).setDisabled(false);
+                        }
                     }
                 }
-            }
-            appendMessage(msg);
-        } else {
-            appendMessage(msg);
+                this.btnStart.setVisible(false);
+                this.btnStop.setVisible(true);
+                break;
+            case Constants.STOP_GAME:
+                LOGGER.info("processing end turn: " + msg.getContent());
+                if (this.grdTableGame.getRows().getChildren().size() > 0) {
+                    Row row = (Row) this.grdTableGame.getRows().getLastChild();
+                    for (Component comp : row.getChildren()) {
+                        if (comp instanceof Textbox) {
+                            ((Textbox) comp).setDisabled(true);
+                        }
+                    }
+                }
+                this.btnStart.setVisible(true);
+                this.btnStop.setVisible(false);
+                break;
+            case Constants.JOIN_GAME:
+                LOGGER.info("joining game: " + msg.getContent());
+                break;
+            default:
+                break;
         }
+        appendMessage(msg);
     }
     
     @Listen("onClick = #btnStart")
     public void startGame(final MouseEvent _event) {
-        this.btnStart.setVisible(false);
-        this.btnStop.setVisible(true);
+        GameMessage gameMessage = new GameMessage("Turno Iniciado", 
+                        this.gameBoard.getGameUser().getUserName(), Constants.START_GAME);
+        this.gameBoard.getGameRoom().broadcastAll(gameMessage);
     }
     
     @Listen("onClick = #btnStop")
     public void stopGame(final MouseEvent _event) {
-        this.btnStart.setVisible(false);
-        this.btnStop.setVisible(true);
-        GameMessage gameMessage = new GameMessage("Turno Terminado", this.gameBoard.getGameUser().getUserName(), true);
-        this.gameBoard.getGameUser().addGameMessage(gameMessage);;
+        GameMessage gameMessage = new GameMessage("Turno Terminado", 
+                        this.gameBoard.getGameUser().getUserName(), Constants.STOP_GAME);
+        this.gameBoard.getGameRoom().broadcastAll(gameMessage);
     }
     
     public void appendMessage(GameMessage _message) {

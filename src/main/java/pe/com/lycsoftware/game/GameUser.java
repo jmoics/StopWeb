@@ -81,19 +81,8 @@ public class GameUser
     private void process()
         throws Exception
     {
-        if (this.gameMessage.isEndTurn()) {
-            LOGGER.info("processing turn: " + this.gameMessage.getContent());
-            /*
-             * HashMap<String, Message> msgs = new HashMap<String, Message>();
-             * msgs.put("msg",_msg);
-             */
-            Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
-            this.gameMessage = null;
-        } else {
-            LOGGER.info("processing message: " + this.gameMessage.getContent());
-            Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
-            this.gameMessage = null;
-        }
+        Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
+        this.gameMessage = null;
     }
 
     /**

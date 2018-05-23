@@ -5,21 +5,21 @@ public class GameMessage
 {
     private String content;
     private String sender;
-    private boolean endTurn;
+    private int status;
     
     public GameMessage(String _content, 
                        String _sender){
         this.content = _content;
         this.sender = _sender;
-        this.endTurn = false;
+        this.status = 2;
     }
     
     public GameMessage(String _content, 
                        String _sender,
-                       boolean _endTurn){
+                       int _status){
         this.content = _content;
         this.sender = _sender;
-        this.endTurn = _endTurn;
+        this.status = _status;
     }
     
     public String getContent()
@@ -32,8 +32,9 @@ public class GameMessage
         return sender;
     }
     
-    public boolean isEndTurn()
+    public int getStatus()
     {
-        return endTurn;
+        return status;
     }
+    
 }
