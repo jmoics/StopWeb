@@ -1,5 +1,8 @@
 package pe.com.lycsoftware.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
@@ -14,6 +17,7 @@ import pe.com.lycsoftware.game.GameBoard;
 import pe.com.lycsoftware.game.GameMessage;
 import pe.com.lycsoftware.game.GameRoom;
 import pe.com.lycsoftware.game.GameUser;
+import pe.com.lycsoftware.util.Constants;
 
 public class IndexCtrl
     extends SelectorComposer<Window>
@@ -55,18 +59,19 @@ public class IndexCtrl
 
             gameUser = new GameUser(gameRoom, userName, this.getSelf().getDesktop());
             // broadcast
-            gameRoom.broadcast(new GameMessage(userName + " has joined this gameroom", userName)); 
+            gameRoom.broadcast(new GameMessage(userName + " se a unido al juego", userName)); 
             gameUser.start();
             // set the MessageBoard to the session
             gameBoard = new GameBoard(gameUser, gameRoom);
             Sessions.getCurrent().setAttribute("gameBoard", gameBoard);
             // welcome message
-            //GameMessage msg = new GameMessage("Welcome " + userName, userName, true);
-            //gameBoard.setMessage(msg);
+            GameMessage msg = new GameMessage("Bienvenido al juego " + userName, userName);
             // refresh UI
             // displayChatGrid();
             //Executions.sendRedirect("tableGame.zul");
-            Executions.createComponents("tableGame.zul", this.getSelf(), null);
+            Map<String, GameMessage> map = new HashMap<>();
+            map.put(Constants.INIT_MESSAGE, msg);
+            Executions.createComponents("tableGame.zul", null, map);
             this.loginGrid.setVisible(false);
             this.getSelf().setBorder(false);
             // appendMessage(msg);

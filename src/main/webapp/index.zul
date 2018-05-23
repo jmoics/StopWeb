@@ -1,7 +1,7 @@
 <?page id="mainPage" title="Login" contentType="text/html;charset=UTF-8"?>
 <zk>
 <window  border="none" apply="pe.com.lycsoftware.controller.IndexCtrl">
-	<grid id="loginGrid">
+    <grid id="loginGrid">
         <auxhead>
             <auxheader colspan="2" label="Login" />
         </auxhead>

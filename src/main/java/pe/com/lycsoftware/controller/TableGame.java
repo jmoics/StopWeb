@@ -1,5 +1,7 @@
 package pe.com.lycsoftware.controller;
 
+import java.util.Map;
+
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
@@ -20,6 +22,7 @@ import org.zkoss.zul.Window;
 import pe.com.lycsoftware.game.GameBoard;
 import pe.com.lycsoftware.game.GameMessage;
 import pe.com.lycsoftware.model.Category;
+import pe.com.lycsoftware.util.Constants;
 
 public class TableGame
     extends SelectorComposer<Window>
@@ -42,7 +45,10 @@ public class TableGame
         gameBoard = (GameBoard) Sessions.getCurrent().getAttribute("gameBoard");
         this.getSelf().getDesktop().enableServerPush(true);
         this.getSelf().setTitle(" " + this.gameBoard.getGameRoom().getName() + " - " + this.gameBoard.getGameUser().getUserName());
+        final Map<?, ?> mapArg = getSelf().getDesktop().getExecution().getArg();
+        GameMessage gameMessage = (GameMessage) mapArg.get(Constants.INIT_MESSAGE);
         buildGameBoard();
+        appendMessage(gameMessage);
     }
 
     private void buildGameBoard()
@@ -85,11 +91,10 @@ public class TableGame
                     }
                 }
             }
-            this.lstMessages.appendChild(new Listitem(msg.getSender() + " - " + msg.getContent()));
+            appendMessage(msg);
         } else {
-            this.lstMessages.appendChild(new Listitem(msg.getSender() + " - " + msg.getContent()));
+            appendMessage(msg);
         }
-        
     }
     
     @Listen("onClick = #btnStart")
@@ -104,5 +109,9 @@ public class TableGame
         this.btnStop.setVisible(true);
         GameMessage gameMessage = new GameMessage("Turno Terminado", this.gameBoard.getGameUser().getUserName(), true);
         this.gameBoard.getGameUser().addGameMessage(gameMessage);;
+    }
+    
+    public void appendMessage(GameMessage _message) {
+        this.lstMessages.appendChild(new Listitem(_message.getSender() + " - " + _message.getContent()));
     }
 }

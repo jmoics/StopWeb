@@ -1,4 +1,3 @@
-<?page title="TableGame" contentType="text/html;charset=UTF-8"?>
 <zk>
 <window id="winTabGam" border="normal" apply="pe.com.lycsoftware.controller.TableGame">
     <grid id="grdTableGame">
@@ -9,7 +8,10 @@
     </button>
     <button id="btnStop" label="Stop" visible="false">
     </button>
-    <listbox id="lstMessages">
+    <listbox id="lstMessages" width="400px">
+        <listhead>
+            <listheader label="Mensajes" sort="auto" />
+        </listhead>
     </listbox>
 </window>
 </zk>

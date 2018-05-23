@@ -10,7 +10,8 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 
-public class GameUser extends Thread
+public class GameUser
+    extends Thread
 {
     /**
      * 
@@ -22,7 +23,7 @@ public class GameUser extends Thread
     private final Desktop desktop;
     private Integer score;
     private boolean finishGame;
-    //private boolean endTurn;
+    // private boolean endTurn;
     private GameMessage gameMessage;
 
     public GameUser(GameRoom _gameRoom,
@@ -35,15 +36,16 @@ public class GameUser extends Thread
         this.gameMessage = null;
         this.gameRoom.add(this);
     }
-    
+
     /**
      * Send new messages to UI if necessary.
      */
-    public void run() {
+    public void run()
+    {
         if (!this.desktop.isServerPushEnabled())
             this.desktop.enableServerPush(true);
         LOGGER.info("Active chatUser thread: " + getName());
-        try {
+        //try {
             while (!finishGame) {
                 try {
                     if (gameMessage == null) {
@@ -64,40 +66,47 @@ public class GameUser extends Thread
                     throw UiException.Aide.wrap(ex);
                 }
             }
-        } finally {
+        /*} finally {
             cleanUp();
-        }
-        LOGGER.info("chatUser thread ceased: " + getName() );
+        }*/
+        LOGGER.info("chatUser thread ceased: " + getName());
     }
 
     /**
-     * Task: If there is a new message for the chat user, post a new "onBroadcast" event with
-     * the message passed in.
+     * Task: If there is a new message for the chat user, post a new
+     * "onBroadcast" event with the message passed in.
+     * 
      * @throws Exception
      */
-    private void process() throws Exception {
+    private void process()
+        throws Exception
+    {
         if (this.gameMessage.isEndTurn()) {
-            LOGGER.info("processing turn: "+ this.gameMessage.getContent());
-            /*HashMap<String, Message> msgs = new HashMap<String, Message>();
-            msgs.put("msg",_msg);*/
-            Events.postEvent(new Event("onBroadcast", this.desktop.getPage("mainPage").getFellow("winTabGam"), this.gameMessage));
+            LOGGER.info("processing turn: " + this.gameMessage.getContent());
+            /*
+             * HashMap<String, Message> msgs = new HashMap<String, Message>();
+             * msgs.put("msg",_msg);
+             */
+            Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
             this.gameMessage = null;
         } else {
-            LOGGER.info("processing message: "+ this.gameMessage.getContent());
-            Events.postEvent(new Event("onBroadcast", this.desktop.getPage("mainPage").getFellow("winTabGam"), this.gameMessage));
+            LOGGER.info("processing message: " + this.gameMessage.getContent());
+            Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
             this.gameMessage = null;
         }
     }
-    
+
     /**
      * Task: Clean up before stopping thread.
      */
-    public void cleanUp(){
+    public void cleanUp()
+    {
         LOGGER.info(getUserName() + " has logged out of the gameroom!");
         this.gameRoom.remove(this);
+        this.gameMessage = null;
         if (desktop.isServerPushEnabled())
             Executions.getCurrent().getDesktop().enableServerPush(false);
-        //setEndTurn();
+        // setEndTurn();
     }
 
     public String getUserName()
@@ -125,14 +134,13 @@ public class GameUser extends Thread
         return desktop;
     }
 
-    /*public void setEndTurn()
-    {
-        this.endTurn = true;
-    }*/
-    
+    /*
+     * public void setEndTurn() { this.endTurn = true; }
+     */
+
     public void addGameMessage(GameMessage gameMessage)
     {
         this.gameMessage = gameMessage;
     }
-    
+
 }

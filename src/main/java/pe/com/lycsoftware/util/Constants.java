@@ -13,4 +13,5 @@ public class Constants
         new Category("Ciudades"),
         new Category("Vegetales")
     };
+    public static final String INIT_MESSAGE = "init_message";
 }
