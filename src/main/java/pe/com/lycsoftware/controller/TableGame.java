@@ -24,7 +24,6 @@ import org.zkoss.zul.Window;
 
 import pe.com.lycsoftware.game.GameBoard;
 import pe.com.lycsoftware.game.GameMessage;
-import pe.com.lycsoftware.game.GameRoom;
 import pe.com.lycsoftware.model.Category;
 import pe.com.lycsoftware.util.Constants;
 
@@ -138,18 +137,23 @@ public class TableGame
     
     @Listen("onClick = #btnStart")
     public void startGame(final MouseEvent _event) {
-        GameMessage gameMessage = new GameMessage("Turno Iniciado", 
-                        this.gameBoard.getGameUser().getUserName(), Constants.START_GAME, generateRandomLetter());
-        this.gameBoard.getGameRoom().broadcastAll(gameMessage);
+        if (this.gameBoard.getGameRoom().isReadyPlayers()) {
+            GameMessage gameMessage = new GameMessage("Turno Iniciado", 
+                            this.gameBoard.getGameUser().getUserName(), Constants.START_GAME, generateRandomLetter());
+            this.gameBoard.getGameRoom().broadcastAll(gameMessage);
+        } else {
+            alert("Los usuarios no se encuentran listos para iniciar el juego");
+        }
     }
-    
+
     @Listen("onClick = #btnStop")
     public void stopGame(final MouseEvent _event) {
         GameMessage gameMessage = new GameMessage("Turno Terminado", 
                         this.gameBoard.getGameUser().getUserName(), Constants.STOP_GAME, null);
         this.gameBoard.getGameUser().setReady(false);
-        GameRoom gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(this.gameBoard.getGameRoom().getName());
-        gameRoom.setReadyPlayers(false);
+        // GameRoom gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(this.gameBoard.getGameRoom().getName());
+        // gameRoom.setReadyPlayers(false);
+        this.gameBoard.getGameRoom().setReadyPlayers(false);
         this.gameBoard.getGameRoom().broadcastAll(gameMessage);
     }
     

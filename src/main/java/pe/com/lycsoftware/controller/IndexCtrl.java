@@ -76,7 +76,7 @@ public class IndexCtrl
             this.getSelf().setBorder(false);
             // appendMessage(msg);
         } else {
-            alert("This username is already in use. Please choose another.");
+            alert("El nombre de usuario se encuentra en uso, por favor escoger otro");
         }
 
     }
