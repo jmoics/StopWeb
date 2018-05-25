@@ -24,6 +24,7 @@ import org.zkoss.zul.Window;
 
 import pe.com.lycsoftware.game.GameBoard;
 import pe.com.lycsoftware.game.GameMessage;
+import pe.com.lycsoftware.game.GameRoom;
 import pe.com.lycsoftware.model.Category;
 import pe.com.lycsoftware.util.Constants;
 
@@ -114,6 +115,8 @@ public class TableGame
                 break;
             case Constants.STOP_GAME:
                 LOGGER.info("processing end turn: " + msg.getContent());
+                this.btnStart.setVisible(true);
+                this.btnStop.setVisible(false);
                 if (this.grdTableGame.getRows().getChildren().size() > 0) {
                     Row row = (Row) this.grdTableGame.getRows().getLastChild();
                     for (Component comp : row.getChildren()) {
@@ -123,8 +126,6 @@ public class TableGame
                     }
                 }
                 buildGameBoard();
-                this.btnStart.setVisible(true);
-                this.btnStop.setVisible(false);
                 break;
             case Constants.JOIN_GAME:
                 LOGGER.info("joining game: " + msg.getContent());
@@ -146,6 +147,9 @@ public class TableGame
     public void stopGame(final MouseEvent _event) {
         GameMessage gameMessage = new GameMessage("Turno Terminado", 
                         this.gameBoard.getGameUser().getUserName(), Constants.STOP_GAME, null);
+        this.gameBoard.getGameUser().setReady(false);
+        GameRoom gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(this.gameBoard.getGameRoom().getName());
+        gameRoom.setReadyPlayers(false);
         this.gameBoard.getGameRoom().broadcastAll(gameMessage);
     }
     

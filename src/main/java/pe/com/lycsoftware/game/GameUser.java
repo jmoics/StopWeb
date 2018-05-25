@@ -23,6 +23,7 @@ public class GameUser
     private final Desktop desktop;
     private Integer score;
     private boolean finishGame;
+    private boolean ready;
     // private boolean endTurn;
     private GameMessage gameMessage;
 
@@ -49,7 +50,7 @@ public class GameUser
             while (!finishGame) {
                 try {
                     if (gameMessage == null) {
-                        Threads.sleep(500);// Update each 0.5 seconds
+                        Threads.sleep(100);// Update each 0.5 seconds
                     } else {
                         Executions.activate(desktop);
                         try {
@@ -131,5 +132,14 @@ public class GameUser
     {
         this.gameMessage = gameMessage;
     }
-
+    
+    public boolean isReady()
+    {
+        return ready;
+    }
+    
+    public void setReady(boolean ready)
+    {
+        this.ready = ready;
+    }
 }

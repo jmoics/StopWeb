@@ -7,6 +7,7 @@ public class GameRoom
 {
     private String name;
     private List<GameUser> gameUsers;
+    private boolean readyPlayers;
 
     public GameRoom(String _name)
     {
@@ -101,4 +102,15 @@ public class GameRoom
             gameUsers.remove(getGameUser(nickname));
         }
     }
+    
+    public boolean isReadyPlayers()
+    {
+        return readyPlayers;
+    }
+    
+    public void setReadyPlayers(boolean readyPlayers)
+    {
+        this.readyPlayers = readyPlayers;
+    }
+
 }
