@@ -2,6 +2,7 @@ package pe.com.lycsoftware.controller;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zkoss.zk.ui.Component;
@@ -45,7 +46,7 @@ public class TableGame
         throws Exception
     {
         super.doAfterCompose(comp);
-        gameBoard = (GameBoard) Sessions.getCurrent().getAttribute("gameBoard");
+        this.gameBoard = (GameBoard) Sessions.getCurrent().getAttribute("gameBoard");
         this.getSelf().getDesktop().enableServerPush(true);
         this.getSelf().setTitle(" " + this.gameBoard.getGameRoom().getName() + " - " + this.gameBoard.getGameUser().getUserName());
         final Map<?, ?> mapArg = getSelf().getDesktop().getExecution().getArg();
@@ -56,30 +57,33 @@ public class TableGame
 
     private void buildGameBoard()
     {
-        Column column = new Column("Turno/Letra");
-        column.setHflex("1");
-        this.grdTableGame.getColumns().appendChild(column);
-        for (Category cat : this.gameBoard.getCategories()) {
-            column = new Column(cat.getName());
+        if (this.grdTableGame.getRows().getChildren().size() == 0) {
+            Column column = new Column("Turno/Letra");
+            column.setHflex("1");
+            this.grdTableGame.getColumns().appendChild(column);
+            for (Category cat : this.gameBoard.getCategories()) {
+                column = new Column(cat.getName());
+                column.setHflex("2");
+                this.grdTableGame.getColumns().appendChild(column);
+            }
+            column = new Column("Total");
             column.setHflex("2");
             this.grdTableGame.getColumns().appendChild(column);
         }
         Row row = new Row();
-        if (this.grdTableGame.getRows().getChildren().size() == 0) {
-            Label label = new Label("1");
-            row.appendChild(label);
-            for (Category cat : this.gameBoard.getCategories()) {
-                Textbox textCat = new Textbox();
-                textCat.setId(cat.getName() + "_1");
-                textCat.setDisabled(true);
-                row.appendChild(textCat);
-            }
+        Label label = new Label("" + (this.grdTableGame.getRows().getChildren().size() + 1));
+        label.setId("turnLetter_" + (this.grdTableGame.getRows().getChildren().size() + 1));
+        row.appendChild(label);
+        for (Category cat : this.gameBoard.getCategories()) {
+            Textbox textCat = new Textbox();
+            textCat.setId(cat.getName() + "_" + (this.grdTableGame.getRows().getChildren().size() + 1));
+            textCat.setDisabled(true);
+            row.appendChild(textCat);
         }
+        label = new Label();
+        label.setId("total_" + (this.grdTableGame.getRows().getChildren().size() + 1));
+        row.appendChild(label);
         this.grdTableGame.getRows().appendChild(row);
-    }
-    
-    private void rebuildGameBoard() {
-        
     }
     
     /**
@@ -99,6 +103,9 @@ public class TableGame
                     for (Component comp : row.getChildren()) {
                         if (comp instanceof Textbox) {
                             ((Textbox) comp).setDisabled(false);
+                        } else if (comp instanceof Label && comp.getId().startsWith("turnLetter_")) {
+                            // TODO save the used letters.
+                            ((Label) comp).setValue(((Label) comp).getValue() + " - " + msg.getLetter());
                         }
                     }
                 }
@@ -115,6 +122,7 @@ public class TableGame
                         }
                     }
                 }
+                buildGameBoard();
                 this.btnStart.setVisible(true);
                 this.btnStop.setVisible(false);
                 break;
@@ -130,18 +138,23 @@ public class TableGame
     @Listen("onClick = #btnStart")
     public void startGame(final MouseEvent _event) {
         GameMessage gameMessage = new GameMessage("Turno Iniciado", 
-                        this.gameBoard.getGameUser().getUserName(), Constants.START_GAME);
+                        this.gameBoard.getGameUser().getUserName(), Constants.START_GAME, generateRandomLetter());
         this.gameBoard.getGameRoom().broadcastAll(gameMessage);
     }
     
     @Listen("onClick = #btnStop")
     public void stopGame(final MouseEvent _event) {
         GameMessage gameMessage = new GameMessage("Turno Terminado", 
-                        this.gameBoard.getGameUser().getUserName(), Constants.STOP_GAME);
+                        this.gameBoard.getGameUser().getUserName(), Constants.STOP_GAME, null);
         this.gameBoard.getGameRoom().broadcastAll(gameMessage);
     }
     
     public void appendMessage(GameMessage _message) {
         this.lstMessages.appendChild(new Listitem(_message.getSender() + " - " + _message.getContent()));
+    }
+    
+    private String generateRandomLetter() {
+        String letter = RandomStringUtils.randomAlphabetic(1);
+        return letter;
     }
 }

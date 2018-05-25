@@ -4,6 +4,7 @@ package pe.com.lycsoftware.game;
 public class GameMessage
 {
     private String content;
+    private String letter;
     private String sender;
     private int status;
     
@@ -16,10 +17,12 @@ public class GameMessage
     
     public GameMessage(String _content, 
                        String _sender,
-                       int _status){
+                       int _status,
+                       String _letter){
         this.content = _content;
         this.sender = _sender;
         this.status = _status;
+        this.letter = _letter;
     }
     
     public String getContent()
@@ -37,4 +40,8 @@ public class GameMessage
         return status;
     }
     
+    public String getLetter()
+    {
+        return letter;
+    }
 }
