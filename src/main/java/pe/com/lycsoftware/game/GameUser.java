@@ -13,13 +13,14 @@ import org.zkoss.zk.ui.event.Events;
 public class GameUser
     extends Thread
 {
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7202998643864819228L;
     private static final Logger LOGGER = LoggerFactory.getLogger(GameUser.class);
-    private String userName;
-    private GameRoom gameRoom;
+    private final String userName;
+    private final GameRoom gameRoom;
     private final Desktop desktop;
     private Integer score;
     private boolean finishGame;
@@ -27,9 +28,9 @@ public class GameUser
     // private boolean endTurn;
     private GameMessage gameMessage;
 
-    public GameUser(GameRoom _gameRoom,
-                    String _userName,
-                    Desktop _desktop)
+    public GameUser(final GameRoom _gameRoom,
+                    final String _userName,
+                    final Desktop _desktop)
     {
         this.userName = _userName;
         this.gameRoom = _gameRoom;
@@ -41,42 +42,43 @@ public class GameUser
     /**
      * Send new messages to UI if necessary.
      */
+    @Override
     public void run()
     {
         if (!this.desktop.isServerPushEnabled())
             this.desktop.enableServerPush(true);
         LOGGER.info("Active chatUser thread: " + getName());
-        //try {
-            while (!finishGame) {
-                try {
-                    if (gameMessage == null) {
-                        Threads.sleep(100);// Update each 0.5 seconds
-                    } else {
-                        Executions.activate(desktop);
-                        try {
-                            process();
-                        } finally {
-                            Executions.deactivate(desktop);
-                        }
+        // try {
+        while (!finishGame) {
+            try {
+                if (gameMessage == null) {
+                    Threads.sleep(100);// Update each 0.5 seconds
+                } else {
+                    Executions.activate(desktop);
+                    try {
+                        process();
+                    } finally {
+                        Executions.deactivate(desktop);
                     }
-                } catch (DesktopUnavailableException ex) {
-                    LOGGER.info("Browser exited.");
-                    cleanUp();
-                } catch (Throwable ex) {
-                    LOGGER.error("Error in thread", ex);
-                    throw UiException.Aide.wrap(ex);
                 }
+            } catch (final DesktopUnavailableException ex) {
+                LOGGER.info("Browser exited.");
+                cleanUp();
+            } catch (final Throwable ex) {
+                LOGGER.error("Error in thread", ex);
+                throw UiException.Aide.wrap(ex);
             }
-        /*} finally {
-            cleanUp();
-        }*/
+        }
+        /*
+         * } finally { cleanUp(); }
+         */
         LOGGER.info("chatUser thread ceased: " + getName());
     }
 
     /**
      * Task: If there is a new message for the chat user, post a new
      * "onBroadcast" event with the message passed in.
-     * 
+     *
      * @throws Exception
      */
     private void process()
@@ -109,7 +111,7 @@ public class GameUser
         return score;
     }
 
-    public void setScore(Integer score)
+    public void setScore(final Integer score)
     {
         this.score = score;
     }
@@ -128,17 +130,17 @@ public class GameUser
      * public void setEndTurn() { this.endTurn = true; }
      */
 
-    public void addGameMessage(GameMessage gameMessage)
+    public void addGameMessage(final GameMessage gameMessage)
     {
         this.gameMessage = gameMessage;
     }
-    
+
     public boolean isReady()
     {
         return ready;
     }
-    
-    public void setReady(boolean ready)
+
+    public void setReady(final boolean ready)
     {
         this.ready = ready;
     }

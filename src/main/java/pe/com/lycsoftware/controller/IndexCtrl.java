@@ -22,6 +22,7 @@ import pe.com.lycsoftware.util.Constants;
 public class IndexCtrl
     extends SelectorComposer<Window>
 {
+
     @Wire
     private Textbox txtName;
     @Wire
@@ -36,7 +37,7 @@ public class IndexCtrl
     private GameBoard gameBoard;
 
     @Override
-    public void doAfterCompose(Window comp)
+    public void doAfterCompose(final Window comp)
         throws Exception
     {
         // TODO Auto-generated method stub
@@ -59,17 +60,17 @@ public class IndexCtrl
 
             gameUser = new GameUser(gameRoom, userName, this.getSelf().getDesktop());
             // broadcast
-            gameRoom.broadcast(new GameMessage(userName + " se a unido al juego", userName)); 
+            gameRoom.broadcast(new GameMessage(userName + " se a unido al juego", userName));
             gameUser.start();
             // set the MessageBoard to the session
             gameBoard = new GameBoard(gameUser, gameRoom);
             Sessions.getCurrent().setAttribute("gameBoard", gameBoard);
             // welcome message
-            GameMessage msg = new GameMessage("Bienvenido al juego " + userName, userName);
+            final GameMessage msg = new GameMessage("Bienvenido al juego " + userName, userName);
             // refresh UI
             // displayChatGrid();
-            //Executions.sendRedirect("tableGame.zul");
-            Map<String, GameMessage> map = new HashMap<>();
+            // Executions.sendRedirect("tableGame.zul");
+            final Map<String, GameMessage> map = new HashMap<>();
             map.put(Constants.INIT_MESSAGE, msg);
             Executions.createComponents("tableGame.zul", null, map);
             this.loginGrid.setVisible(false);
