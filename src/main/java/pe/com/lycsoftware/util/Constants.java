@@ -4,6 +4,9 @@ import pe.com.lycsoftware.model.Category;
 
 public class Constants
 {
+    public static final String GAMEBOARD_KEY = "gameBoard";
+    public static final String CATEGORY_KEY = "category";
+    
     public static Category categories[] = {
         new Category("Nombres"),
         new Category("Apellidos"),

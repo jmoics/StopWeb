@@ -2,12 +2,19 @@ package pe.com.lycsoftware.model;
 
 import java.io.Serializable;
 
-public class Cell
+public class TableCell
     implements Serializable
 {
     private Category cat;
     private String data;
     private Integer status;
+    
+    public TableCell(Category _cat,
+                String _data)
+    {
+        this.cat = _cat;
+        this.data = _data;
+    }
     
     public Category getCat()
     {

@@ -1,11 +1,16 @@
 package pe.com.lycsoftware.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
-public class Row
+public class TableRow
 {
     private Integer turn;
-    private List<Cell> cells;
+    private List<TableCell> cells;
+    
+    public TableRow() {
+        cells = new LinkedList<TableCell>();
+    }
     
     public Integer getTurn()
     {
@@ -17,12 +22,12 @@ public class Row
         this.turn = turn;
     }
     
-    public List<Cell> getCells()
+    public List<TableCell> getCells()
     {
         return cells;
     }
     
-    public void setCells(List<Cell> cells)
+    public void setCells(List<TableCell> cells)
     {
         this.cells = cells;
     }

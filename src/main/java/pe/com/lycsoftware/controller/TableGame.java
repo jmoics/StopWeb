@@ -1,11 +1,14 @@
 package pe.com.lycsoftware.controller;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.MouseEvent;
@@ -19,13 +22,17 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Popup;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import pe.com.lycsoftware.game.GameBoard;
 import pe.com.lycsoftware.game.GameMessage;
+import pe.com.lycsoftware.game.GameUser;
 import pe.com.lycsoftware.model.Category;
+import pe.com.lycsoftware.model.TableCell;
+import pe.com.lycsoftware.model.TableRow;
 import pe.com.lycsoftware.util.Constants;
 
 public class TableGame
@@ -44,13 +51,15 @@ public class TableGame
     private Listbox lstMessages;
     @Wire
     private Checkbox chbReady;
+    @Wire
+    private Popup popLog;
 
     @Override
     public void doAfterCompose(final Window comp)
         throws Exception
     {
         super.doAfterCompose(comp);
-        this.gameBoard = (GameBoard) Sessions.getCurrent().getAttribute("gameBoard");
+        this.gameBoard = (GameBoard) Sessions.getCurrent().getAttribute(Constants.GAMEBOARD_KEY);
         this.getSelf().getDesktop().enableServerPush(true);
         this.getSelf().setTitle(" " + this.gameBoard.getGameRoom().getName() + " - "
                         + this.gameBoard.getGameUser().getUserName());
@@ -58,6 +67,34 @@ public class TableGame
         final GameMessage gameMessage = (GameMessage) mapArg.get(Constants.INIT_MESSAGE);
         buildGameBoard();
         appendMessage(gameMessage);
+    }
+    
+    private void saveGameBoard()
+    {
+        if (this.grdTableGame.getRows().getChildren().size() > 0) {
+            final Row row = (Row) this.grdTableGame.getRows().getLastChild();
+            TableRow tabRow = new TableRow();
+            tabRow.setTurn(this.grdTableGame.getRows().getChildren().size());
+            for (final Component comp : row.getChildren()) {
+                if (comp instanceof Textbox) {
+                    Category cat = (Category) comp.getAttribute(Constants.CATEGORY_KEY);
+                    TableCell cell = new TableCell(cat, ((Textbox) comp).getValue());
+                    tabRow.getCells().add(cell);
+                }
+            }
+            this.gameBoard.getTableGame().add(tabRow);
+            Map<GameUser, TableRow> map;
+            if (this.gameBoard.getGameRoom().getResults()
+                            .get(this.gameBoard.getGameRoom().getResults().size() - 1) == null) {
+                map = new LinkedHashMap<>();
+                this.gameBoard.getGameRoom().getResults().add(map);
+            } else {
+                map = this.gameBoard.getGameRoom().getResults()
+                                .get(this.gameBoard.getGameRoom().getResults().size() - 1);
+            }
+            map.put(this.gameBoard.getGameUser(),
+                     this.gameBoard.getTableGame().get(this.gameBoard.getTableGame().size() - 1));
+        }
     }
 
     private void buildGameBoard()
@@ -81,6 +118,7 @@ public class TableGame
         row.appendChild(label);
         for (final Category cat : this.gameBoard.getCategories()) {
             final Textbox textCat = new Textbox();
+            textCat.setAttribute(Constants.CATEGORY_KEY, cat);
             textCat.setHflex("1");
             textCat.setId(cat.getName() + "_" + (this.grdTableGame.getRows().getChildren().size() + 1));
             textCat.setDisabled(true);
@@ -90,6 +128,18 @@ public class TableGame
         label.setId("total_" + (this.grdTableGame.getRows().getChildren().size() + 1));
         row.appendChild(label);
         this.grdTableGame.getRows().appendChild(row);
+    }
+    
+    public void runWindowResult()
+    {
+        final Map<String, Object> dataArgs = new HashMap<>();
+        //dataArgs.put(Constantes.ATTRIBUTE_PARENTFORM, this);
+        final Window w = (Window) Executions.createComponents("tableResult.zul", null, dataArgs);
+        w.setPage(this.getSelf().getPage());
+        //w.setParent(wEAT);
+        //w.doOverlapped();
+        w.doModal();
+        //w.doEmbedded();
     }
 
     /**
@@ -135,6 +185,7 @@ public class TableGame
                 }
                 this.gameBoard.getGameUser().setReady(false);
                 this.chbReady.setChecked(false);
+                saveGameBoard();
                 buildGameBoard();
                 break;
             case Constants.JOIN_GAME:
@@ -173,6 +224,12 @@ public class TableGame
         this.gameBoard.getGameRoom().setInGame(false);
         this.gameBoard.getGameRoom().setReadyPlayers(false);
         this.gameBoard.getGameRoom().broadcastAll(gameMessage);
+    }
+    
+    @Listen("onClick = #btnLog")
+    public void showLog(final MouseEvent _event)
+    {
+        this.popLog.open(this.getSelf(), "overlap");
     }
     
     public void logout(final MouseEvent _event) 

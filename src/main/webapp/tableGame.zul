@@ -8,12 +8,16 @@
     </button>
     <button id="btnStop" label="Stop" visible="false">
     </button>
+    <button id="btnLog" label="Ver Log">
+    </button>
     <label value="Listo para iniciar"></label>
     <checkbox id="chbReady"></checkbox>
-    <listbox id="lstMessages" width="400px">
+    <popup id="popLog" hflex="1">
+        <listbox id="lstMessages" width="600px">
         <listhead>
             <listheader label="Mensajes" sort="auto" />
         </listhead>
     </listbox>
+    </popup>
 </window>
 </zk>

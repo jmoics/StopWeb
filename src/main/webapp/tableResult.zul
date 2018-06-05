@@ -1,5 +1,8 @@
 <zk>
-<window title="TableResult" border="normal">
-New Content Here!
+<window id="winTabRes" title="TableResult" border="normal">
+<grid id="grdTableResult">
+    <columns></columns>
+    <rows></rows>
+</grid>
 </window>
 </zk>

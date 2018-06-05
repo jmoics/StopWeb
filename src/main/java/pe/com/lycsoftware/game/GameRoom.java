@@ -1,13 +1,18 @@
 package pe.com.lycsoftware.game;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import pe.com.lycsoftware.model.TableRow;
 
 public class GameRoom
 {
 
     private final String name;
     private final List<GameUser> gameUsers;
+    private final List<Map<GameUser, TableRow>> results;
     private boolean readyPlayers;
     private boolean inGame;
 
@@ -15,6 +20,7 @@ public class GameRoom
     {
         this.name = _name;
         this.gameUsers = new ArrayList<>();
+        this.results = new LinkedList<>();
     }
 
     /**
@@ -35,8 +41,9 @@ public class GameRoom
     public void broadcastAll(final GameMessage msg)
     {
         synchronized (this.gameUsers) {
-            for (final GameUser gameUser : this.gameUsers)
+            for (final GameUser gameUser : this.gameUsers) {
                 gameUser.addGameMessage(msg);
+            }
         }
     }
 
@@ -140,4 +147,10 @@ public class GameRoom
     {
         this.inGame = inGame;
     }
+    
+    public List<Map<GameUser, TableRow>> getResults()
+    {
+        return results;
+    }
+
 }
