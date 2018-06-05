@@ -72,7 +72,7 @@ public class TableGame
                 this.grdTableGame.getColumns().appendChild(column);
             }
             column = new Column("Total");
-            column.setHflex("2");
+            column.setHflex("1");
             this.grdTableGame.getColumns().appendChild(column);
         }
         final Row row = new Row();
@@ -81,6 +81,7 @@ public class TableGame
         row.appendChild(label);
         for (final Category cat : this.gameBoard.getCategories()) {
             final Textbox textCat = new Textbox();
+            textCat.setHflex("1");
             textCat.setId(cat.getName() + "_" + (this.grdTableGame.getRows().getChildren().size() + 1));
             textCat.setDisabled(true);
             row.appendChild(textCat);
@@ -105,7 +106,7 @@ public class TableGame
         // if a user is entering or leaving chatroom
         switch (msg.getStatus()) {
             case Constants.START_GAME:
-                LOGGER.info("processing start turn: " + msg.getContent());
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> processing start turn: " + msg.getContent());
                 if (this.grdTableGame.getRows().getChildren().size() > 0) {
                     final Row row = (Row) this.grdTableGame.getRows().getLastChild();
                     for (final Component comp : row.getChildren()) {
@@ -121,7 +122,7 @@ public class TableGame
                 this.btnStop.setVisible(true);
                 break;
             case Constants.STOP_GAME:
-                LOGGER.info("processing end turn: " + msg.getContent());
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> processing end turn: " + msg.getContent());
                 this.btnStart.setVisible(true);
                 this.btnStop.setVisible(false);
                 if (this.grdTableGame.getRows().getChildren().size() > 0) {
@@ -137,7 +138,10 @@ public class TableGame
                 buildGameBoard();
                 break;
             case Constants.JOIN_GAME:
-                LOGGER.info("joining game: " + msg.getContent());
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> joining game: " + msg.getContent());
+                break;
+            case Constants.READY_GAME:
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user ready for game: " + msg.getContent());
                 break;
             default:
                 break;
@@ -148,9 +152,10 @@ public class TableGame
     @Listen("onClick = #btnStart")
     public void startGame(final MouseEvent _event)
     {
-        if (this.gameBoard.getGameRoom().isReadyPlayers()) {
+        if (this.gameBoard.getGameRoom().isReadyPlayers() && !this.gameBoard.getGameRoom().isInGame()) {
             final GameMessage gameMessage = new GameMessage("Turno Iniciado",
                             this.gameBoard.getGameUser().getUserName(), Constants.START_GAME, generateRandomLetter());
+            this.gameBoard.getGameRoom().setInGame(true);
             this.gameBoard.getGameRoom().broadcastAll(gameMessage);
         } else {
             alert("Los usuarios no se encuentran listos para iniciar el juego");
@@ -165,14 +170,23 @@ public class TableGame
         // GameRoom gameRoom = (GameRoom)
         // this.getSelf().getDesktop().getWebApp().getAttribute(this.gameBoard.getGameRoom().getName());
         // gameRoom.setReadyPlayers(false);
+        this.gameBoard.getGameRoom().setInGame(false);
         this.gameBoard.getGameRoom().setReadyPlayers(false);
         this.gameBoard.getGameRoom().broadcastAll(gameMessage);
+    }
+    
+    public void logout(final MouseEvent _event) 
+    {
+        
     }
 
     @Listen("onCheck = #chbReady")
     public void readyGame(final Event _event)
     {
         this.gameBoard.getGameUser().setReady(true);
+        final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + "se encuentra listo",
+                        this.gameBoard.getGameUser().getUserName(), Constants.READY_GAME, null);
+        this.gameBoard.getGameRoom().broadcast(gameMessage);
         if (this.gameBoard.getGameRoom().checkReady4All()) {
             this.gameBoard.getGameRoom().setReadyPlayers(true);
         }
@@ -186,6 +200,6 @@ public class TableGame
     private String generateRandomLetter()
     {
         final String letter = RandomStringUtils.randomAlphabetic(1);
-        return letter;
+        return letter.toUpperCase();
     }
 }

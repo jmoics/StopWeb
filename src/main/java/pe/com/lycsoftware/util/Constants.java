@@ -17,4 +17,5 @@ public class Constants
     public static final int START_GAME = 0;
     public static final int STOP_GAME = 1;
     public static final int JOIN_GAME = 2;
+    public static final int READY_GAME = 3;
 }

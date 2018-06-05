@@ -9,6 +9,7 @@ public class GameRoom
     private final String name;
     private final List<GameUser> gameUsers;
     private boolean readyPlayers;
+    private boolean inGame;
 
     public GameRoom(final String _name)
     {
@@ -129,5 +130,14 @@ public class GameRoom
     {
         this.readyPlayers = readyPlayers;
     }
-
+    
+    public boolean isInGame()
+    {
+        return inGame;
+    }
+    
+    public void setInGame(boolean inGame)
+    {
+        this.inGame = inGame;
+    }
 }

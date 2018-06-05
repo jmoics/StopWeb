@@ -13,7 +13,6 @@ import org.zkoss.zk.ui.event.Events;
 public class GameUser
     extends Thread
 {
-
     /**
      *
      */
