@@ -6,7 +6,8 @@ public class Constants
 {
     public static final String GAMEBOARD_KEY = "gameBoard";
     public static final String CATEGORY_KEY = "category";
-    
+    public static final String GAMEROOM_KEY = "gameRoom";
+
     public static Category categories[] = {
         new Category("Nombres"),
         new Category("Apellidos"),

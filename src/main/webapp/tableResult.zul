@@ -1,8 +1,11 @@
 <zk>
-<window id="winTabRes" title="TableResult" border="normal">
-<grid id="grdTableResult">
-    <columns></columns>
-    <rows></rows>
-</grid>
+<window id="winTabRes" title="TableResult" 
+    border="normal" width="1000px" height="900px" closable="true"
+    apply="pe.com.lycsoftware.controller.TableResult">
+    <grid id="grdTableResult">
+        <columns></columns>
+        <rows></rows>
+    </grid>
+    <button id="btnRefresh" label="Refrescar"></button>
 </window>
 </zk>

@@ -68,32 +68,33 @@ public class TableGame
         buildGameBoard();
         appendMessage(gameMessage);
     }
-    
+
     private void saveGameBoard()
     {
-        if (this.grdTableGame.getRows().getChildren().size() > 0) {
-            final Row row = (Row) this.grdTableGame.getRows().getLastChild();
-            TableRow tabRow = new TableRow();
-            tabRow.setTurn(this.grdTableGame.getRows().getChildren().size());
-            for (final Component comp : row.getChildren()) {
-                if (comp instanceof Textbox) {
-                    Category cat = (Category) comp.getAttribute(Constants.CATEGORY_KEY);
-                    TableCell cell = new TableCell(cat, ((Textbox) comp).getValue());
-                    tabRow.getCells().add(cell);
+        synchronized(this) {
+            if (this.grdTableGame.getRows().getChildren().size() > 0) {
+                final Row row = (Row) this.grdTableGame.getRows().getLastChild();
+                final TableRow tabRow = new TableRow();
+                tabRow.setTurn(this.grdTableGame.getRows().getChildren().size());
+                for (final Component comp : row.getChildren()) {
+                    if (comp instanceof Textbox) {
+                        final Category cat = (Category) comp.getAttribute(Constants.CATEGORY_KEY);
+                        final TableCell cell = new TableCell(cat, ((Textbox) comp).getValue());
+                        tabRow.getCells().add(cell);
+                    }
                 }
+                this.gameBoard.getTableGame().add(tabRow);
+                Map<GameUser, TableRow> map;
+                if (this.gameBoard.getGameRoom().getResults().size() < this.grdTableGame.getRows().getChildren().size()) {
+                    map = new LinkedHashMap<>();
+                    this.gameBoard.getGameRoom().getResults().add(map);
+                } else {
+                    map = this.gameBoard.getGameRoom().getResults()
+                                    .get(this.gameBoard.getGameRoom().getResults().size() - 1);
+                }
+                map.put(this.gameBoard.getGameUser(),
+                         this.gameBoard.getTableGame().get(this.gameBoard.getTableGame().size() - 1));
             }
-            this.gameBoard.getTableGame().add(tabRow);
-            Map<GameUser, TableRow> map;
-            if (this.gameBoard.getGameRoom().getResults()
-                            .get(this.gameBoard.getGameRoom().getResults().size() - 1) == null) {
-                map = new LinkedHashMap<>();
-                this.gameBoard.getGameRoom().getResults().add(map);
-            } else {
-                map = this.gameBoard.getGameRoom().getResults()
-                                .get(this.gameBoard.getGameRoom().getResults().size() - 1);
-            }
-            map.put(this.gameBoard.getGameUser(),
-                     this.gameBoard.getTableGame().get(this.gameBoard.getTableGame().size() - 1));
         }
     }
 
@@ -129,11 +130,16 @@ public class TableGame
         row.appendChild(label);
         this.grdTableGame.getRows().appendChild(row);
     }
-    
+
     public void runWindowResult()
     {
         final Map<String, Object> dataArgs = new HashMap<>();
-        //dataArgs.put(Constantes.ATTRIBUTE_PARENTFORM, this);
+        dataArgs.put(Constants.GAMEBOARD_KEY, this.gameBoard);
+        try {
+            Thread.sleep(1000);
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
         final Window w = (Window) Executions.createComponents("tableResult.zul", null, dataArgs);
         w.setPage(this.getSelf().getPage());
         //w.setParent(wEAT);
@@ -187,6 +193,7 @@ public class TableGame
                 this.chbReady.setChecked(false);
                 saveGameBoard();
                 buildGameBoard();
+                runWindowResult();
                 break;
             case Constants.JOIN_GAME:
                 LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> joining game: " + msg.getContent());
@@ -225,16 +232,16 @@ public class TableGame
         this.gameBoard.getGameRoom().setReadyPlayers(false);
         this.gameBoard.getGameRoom().broadcastAll(gameMessage);
     }
-    
+
     @Listen("onClick = #btnLog")
     public void showLog(final MouseEvent _event)
     {
         this.popLog.open(this.getSelf(), "overlap");
     }
-    
-    public void logout(final MouseEvent _event) 
+
+    public void logout(final MouseEvent _event)
     {
-        
+
     }
 
     @Listen("onCheck = #chbReady")
