@@ -13,13 +13,20 @@ public class Constants
         new Category("Apellidos"),
         new Category("Cosas"),
         new Category("Animales"),
-        new Category("Paises"),
-        new Category("Ciudades"),
-        new Category("Vegetales")
+        new Category("Paises/Ciudades"),
+        new Category("Frutas/Verduras"),
+        new Category("Colores"),
+        new Category("Marcas"),
+        new Category("Series/Peliculas"),
+        new Category("Canciones")
     };
     public static final String INIT_MESSAGE = "init_message";
     public static final int START_GAME = 0;
     public static final int STOP_GAME = 1;
     public static final int JOIN_GAME = 2;
     public static final int READY_GAME = 3;
+    
+    public static final int CELL_WIN = 100;
+    public static final int CELL_DRAW = 50;
+    public static final int CELL_LOSE = 0;
 }

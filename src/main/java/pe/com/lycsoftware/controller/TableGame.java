@@ -79,7 +79,7 @@ public class TableGame
                 for (final Component comp : row.getChildren()) {
                     if (comp instanceof Textbox) {
                         final Category cat = (Category) comp.getAttribute(Constants.CATEGORY_KEY);
-                        final TableCell cell = new TableCell(cat, ((Textbox) comp).getValue());
+                        final TableCell cell = new TableCell(cat, ((Textbox) comp).getValue(), this.gameBoard.getGameUser());
                         tabRow.getCells().add(cell);
                     }
                 }
@@ -214,6 +214,7 @@ public class TableGame
             final GameMessage gameMessage = new GameMessage("Turno Iniciado",
                             this.gameBoard.getGameUser().getUserName(), Constants.START_GAME, generateRandomLetter());
             this.gameBoard.getGameRoom().setInGame(true);
+            this.gameBoard.getGameRoom().setLastTurnCalculated(false);
             this.gameBoard.getGameRoom().broadcastAll(gameMessage);
         } else {
             alert("Los usuarios no se encuentran listos para iniciar el juego");

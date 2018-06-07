@@ -7,6 +7,7 @@ public class TableRow
 {
     private Integer turn;
     private List<TableCell> cells;
+    private Integer total;
     
     public TableRow() {
         cells = new LinkedList<TableCell>();
@@ -30,6 +31,23 @@ public class TableRow
     public void setCells(List<TableCell> cells)
     {
         this.cells = cells;
+    }
+    
+    public Integer getTotal()
+    {
+        return total;
+    }
+    
+    public void setTotal(Integer total)
+    {
+        this.total = total;
+    }
+    
+    public void calculate() 
+    {
+        for (TableCell cell : this.cells) {
+            this.total = this.total + cell.getStatus();
+        }
     }
     
 }

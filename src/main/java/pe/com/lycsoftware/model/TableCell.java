@@ -2,18 +2,23 @@ package pe.com.lycsoftware.model;
 
 import java.io.Serializable;
 
+import pe.com.lycsoftware.game.GameUser;
+
 public class TableCell
     implements Serializable
 {
     private Category cat;
+    private GameUser user;
     private String data;
     private Integer status;
     
-    public TableCell(Category _cat,
-                String _data)
+    public TableCell(final Category _cat,
+                     final String _data,
+                     final GameUser _user)
     {
         this.cat = _cat;
         this.data = _data;
+        this.user = _user;
     }
     
     public Category getCat()
@@ -45,4 +50,10 @@ public class TableCell
     {
         this.status = status;
     }
+    
+    public GameUser getUser()
+    {
+        return user;
+    }
+    
 }

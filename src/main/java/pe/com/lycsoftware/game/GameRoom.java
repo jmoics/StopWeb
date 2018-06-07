@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import pe.com.lycsoftware.model.Category;
+import pe.com.lycsoftware.model.TableColumn;
 import pe.com.lycsoftware.model.TableRow;
 
 public class GameRoom
@@ -13,14 +15,17 @@ public class GameRoom
     private final String name;
     private final List<GameUser> gameUsers;
     private final List<Map<GameUser, TableRow>> results;
+    private final List<Map<Category, TableColumn>> resultsCalc;
     private boolean readyPlayers;
     private boolean inGame;
+    private boolean lastTurnCalculated;
 
     public GameRoom(final String _name)
     {
         this.name = _name;
         this.gameUsers = new ArrayList<>();
         this.results = new LinkedList<>();
+        this.resultsCalc = new LinkedList<>();
     }
 
     /**
@@ -150,7 +155,22 @@ public class GameRoom
     
     public List<Map<GameUser, TableRow>> getResults()
     {
-        return results;
+        return this.results;
     }
-
+    
+    public List<Map<Category, TableColumn>> getResultsCalc()
+    {
+        return resultsCalc;
+    }
+    
+    public boolean isLastTurnCalculated()
+    {
+        return lastTurnCalculated;
+    }
+    
+    public void setLastTurnCalculated(boolean lastTurnCalculated)
+    {
+        this.lastTurnCalculated = lastTurnCalculated;
+    }
+    
 }
