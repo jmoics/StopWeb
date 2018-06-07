@@ -37,8 +37,10 @@ public class TableColumn
             for (Entry<GameUser,TableCell> entry2 : cells.entrySet()) {
                 if (!entry.getValue().equals(entry2.getValue())) {
                     if (entry2.getValue().getData().equalsIgnoreCase(entry.getValue().getData())) {
-                        entry2.getValue().setStatus(Constants.CELL_DRAW);
-                        entry.getValue().setStatus(Constants.CELL_DRAW);
+                        if (entry.getValue().getData() != null && !entry.getValue().getData().isEmpty()) {
+                            entry2.getValue().setStatus(Constants.CELL_DRAW);
+                            entry.getValue().setStatus(Constants.CELL_DRAW);
+                        }
                     } else {
                         if (entry.getValue().getStatus() == null && entry2.getValue().getStatus() == null) {
                             entry2.getValue().setStatus(Constants.CELL_WIN);

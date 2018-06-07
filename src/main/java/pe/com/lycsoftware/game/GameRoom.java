@@ -19,6 +19,7 @@ public class GameRoom
     private boolean readyPlayers;
     private boolean inGame;
     private boolean lastTurnCalculated;
+    private boolean lastUpdateCalculated;;
 
     public GameRoom(final String _name)
     {
@@ -44,6 +45,26 @@ public class GameRoom
     }
 
     public void broadcastAll(final GameMessage msg)
+    {
+        synchronized (this.gameUsers) {
+            for (final GameUser gameUser : this.gameUsers) {
+                gameUser.addGameMessage(msg);
+            }
+        }
+    }
+    
+    public void broadcastResult(final GameMessage msg)
+    {
+        synchronized (this.gameUsers) {
+            for (final GameUser gameUser : this.gameUsers) {
+                if (gameUser.getUserName().compareTo(msg.getSender()) != 0) {
+                    gameUser.addGameMessage(msg);
+                }
+            }
+        }
+    }
+    
+    public void broadcastResultAll(final GameMessage msg)
     {
         synchronized (this.gameUsers) {
             for (final GameUser gameUser : this.gameUsers) {
@@ -173,4 +194,13 @@ public class GameRoom
         this.lastTurnCalculated = lastTurnCalculated;
     }
     
+    public boolean isLastUpdateCalculated()
+    {
+        return lastUpdateCalculated;
+    }
+    
+    public void setLastUpdateCalculated(boolean lastUpdateCalculated)
+    {
+        this.lastUpdateCalculated = lastUpdateCalculated;
+    }
 }

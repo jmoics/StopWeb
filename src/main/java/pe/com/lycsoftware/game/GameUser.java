@@ -10,6 +10,8 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 
+import pe.com.lycsoftware.util.Constants;
+
 public class GameUser
     extends Thread
 {
@@ -22,6 +24,7 @@ public class GameUser
     private final GameRoom gameRoom;
     private final Desktop desktop;
     private Integer score;
+    private Integer scoreLastTurn;
     private boolean finishGame;
     private boolean ready;
     // private boolean endTurn;
@@ -36,6 +39,8 @@ public class GameUser
         this.desktop = _desktop;
         this.gameMessage = null;
         this.gameRoom.add(this);
+        this.score = 0;
+        this.scoreLastTurn = 0;
     }
 
     /**
@@ -48,16 +53,20 @@ public class GameUser
             this.desktop.enableServerPush(true);
         LOGGER.info("Active chatUser thread: " + getName());
         // try {
-        while (!finishGame) {
+        while (!this.finishGame) {
             try {
-                if (gameMessage == null) {
+                if (this.gameMessage == null) {
                     Threads.sleep(100);// Update each 0.5 seconds
                 } else {
-                    Executions.activate(desktop);
+                    Executions.activate(this.desktop);
                     try {
-                        process();
+                        if (this.gameMessage.getStatus() == Constants.RESULT_GAME) {
+                            processResult();
+                        } else {
+                            process();
+                        }
                     } finally {
-                        Executions.deactivate(desktop);
+                        Executions.deactivate(this.desktop);
                     }
                 }
             } catch (final DesktopUnavailableException ex) {
@@ -84,6 +93,13 @@ public class GameUser
         throws Exception
     {
         Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
+        this.gameMessage = null;
+    }
+    
+    private void processResult()
+        throws Exception
+    {
+        Events.postEvent(new Event("onBroadcastResult", null, this.gameMessage));
         this.gameMessage = null;
     }
 
@@ -125,10 +141,6 @@ public class GameUser
         return desktop;
     }
 
-    /*
-     * public void setEndTurn() { this.endTurn = true; }
-     */
-
     public void addGameMessage(final GameMessage gameMessage)
     {
         this.gameMessage = gameMessage;
@@ -142,5 +154,15 @@ public class GameUser
     public void setReady(final boolean ready)
     {
         this.ready = ready;
+    }
+    
+    public Integer getScoreLastTurn()
+    {
+        return scoreLastTurn;
+    }
+    
+    public void setScoreLastTurn(Integer scoreLastTurn)
+    {
+        this.scoreLastTurn = scoreLastTurn;
     }
 }

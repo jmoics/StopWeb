@@ -25,8 +25,10 @@ public class Constants
     public static final int STOP_GAME = 1;
     public static final int JOIN_GAME = 2;
     public static final int READY_GAME = 3;
+    public static final int RESULT_GAME = 4;
+    public static final int LOGOUT_GAME = 5;
     
-    public static final int CELL_WIN = 100;
-    public static final int CELL_DRAW = 50;
-    public static final int CELL_LOSE = 0;
+    public static final Integer CELL_WIN = 100;
+    public static final Integer CELL_DRAW = 50;
+    public static final Integer CELL_LOSE = 0;
 }

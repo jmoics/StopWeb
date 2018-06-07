@@ -1,23 +1,39 @@
 <zk>
-<window id="winTabGam" border="normal" apply="pe.com.lycsoftware.controller.TableGame">
-    <grid id="grdTableGame">
-        <columns></columns>
-        <rows></rows>
-    </grid>
-    <button id="btnStart" label="Start">
-    </button>
-    <button id="btnStop" label="Stop" visible="false">
-    </button>
-    <button id="btnLog" label="Ver Log">
-    </button>
-    <label value="Listo para iniciar"></label>
-    <checkbox id="chbReady"></checkbox>
+<window id="winTabGam" border="none" apply="pe.com.lycsoftware.controller.TableGame">
+    <hbox hflex="1">
+        <vbox hflex="18">
+            <grid id="grdTableGame">
+                <columns></columns>
+                <rows></rows>
+            </grid>
+            <hbox>
+                <button id="btnStart" label="Start">
+                </button>
+                <button id="btnStop" label="Stop" visible="false">
+                </button>
+                <button id="btnLog" label="Ver Log">
+                </button>
+                <button id="btnLogout" label="Logout">
+                </button>
+                <label value="Listo para iniciar"></label>
+                <checkbox id="chbReady"></checkbox>
+            </hbox>
+        </vbox>
+        <separator width="10px"></separator>
+        <grid id="grdGamers" hflex="2">
+            <columns>
+                <column label="Usuario" hflex="1"></column>
+                <column label="Estado" hflex="1"></column>
+            </columns>
+            <rows></rows>
+        </grid>
+    </hbox>
     <popup id="popLog" hflex="1">
         <listbox id="lstMessages" width="600px">
-        <listhead>
-            <listheader label="Mensajes" sort="auto" />
-        </listhead>
-    </listbox>
+            <listhead>
+                <listheader label="Mensajes" sort="auto" />
+            </listhead>
+        </listbox>
     </popup>
 </window>
 </zk>

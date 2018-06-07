@@ -41,7 +41,7 @@ public class TableGame
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TableGame.class);
     @Wire
-    private Grid grdTableGame;
+    private Grid grdTableGame, grdGamers;
     private GameBoard gameBoard;
     @Wire
     private Button btnStart;
@@ -162,7 +162,10 @@ public class TableGame
         // if a user is entering or leaving chatroom
         switch (msg.getStatus()) {
             case Constants.START_GAME:
-                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> processing start turn: " + msg.getContent());
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" 
+                                + " --> processing start turn: " + msg.getContent());
+                this.gameBoard.getGameUser().setScore(this.gameBoard.getGameUser().getScore() 
+                                + this.gameBoard.getGameUser().getScoreLastTurn());
                 if (this.grdTableGame.getRows().getChildren().size() > 0) {
                     final Row row = (Row) this.grdTableGame.getRows().getLastChild();
                     for (final Component comp : row.getChildren()) {
@@ -200,6 +203,9 @@ public class TableGame
                 break;
             case Constants.READY_GAME:
                 LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user ready for game: " + msg.getContent());
+                break;
+            case Constants.LOGOUT_GAME:
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user leave the game: " + msg.getContent());
                 break;
             default:
                 break;
@@ -240,16 +246,21 @@ public class TableGame
         this.popLog.open(this.getSelf(), "overlap");
     }
 
+    @Listen("onClick = #btnLogout")
     public void logout(final MouseEvent _event)
     {
-
+        final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " dejó el juego",
+                        this.gameBoard.getGameUser().getUserName(), Constants.LOGOUT_GAME, null);
+        Sessions.getCurrent().removeAttribute(Constants.GAMEBOARD_KEY);
+        this.gameBoard.getGameUser().cleanUp();
+        this.gameBoard.getGameRoom().broadcast(gameMessage);
     }
 
     @Listen("onCheck = #chbReady")
     public void readyGame(final Event _event)
     {
         this.gameBoard.getGameUser().setReady(true);
-        final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + "se encuentra listo",
+        final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " se encuentra listo",
                         this.gameBoard.getGameUser().getUserName(), Constants.READY_GAME, null);
         this.gameBoard.getGameRoom().broadcast(gameMessage);
         if (this.gameBoard.getGameRoom().checkReady4All()) {

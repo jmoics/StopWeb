@@ -1,6 +1,6 @@
 <zk>
 <window id="winTabRes" title="TableResult" 
-    border="normal" width="1000px" height="900px" closable="true"
+    border="normal" width="95%" height="600px" closable="true"
     apply="pe.com.lycsoftware.controller.TableResult">
     <grid id="grdTableResult">
         <columns></columns>

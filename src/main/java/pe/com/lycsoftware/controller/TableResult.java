@@ -6,18 +6,23 @@ import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Column;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Vbox;
 import org.zkoss.zul.Window;
 
 import pe.com.lycsoftware.game.GameBoard;
+import pe.com.lycsoftware.game.GameMessage;
 import pe.com.lycsoftware.game.GameUser;
 import pe.com.lycsoftware.model.Category;
 import pe.com.lycsoftware.model.TableCell;
@@ -53,7 +58,7 @@ public class TableResult
         if (!this.gameBoard.getGameRoom().isLastTurnCalculated()) {
             final Map<GameUser, TableRow> mapRes = this.gameBoard.getGameRoom().getResults()
                             .get(this.gameBoard.getGameRoom().getResults().size() - 1);
-            
+
             while (mapRes.size() < this.gameBoard.getGameRoom().getGameUsers().size()) {
                 try {
                     Thread.sleep(100);
@@ -73,7 +78,7 @@ public class TableResult
             for (final Entry<GameUser, TableRow> entry : mapRes.entrySet()) {
                 for (final TableCell tabcell : entry.getValue().getCells()) {
                     if (tabcell.getData().isEmpty() || tabcell.getData().length() == 1) {
-                        tabcell.setData(null);
+                        tabcell.setData("");
                         tabcell.setStatus(Constants.CELL_LOSE);
                     }
                     if (mapCalc.containsKey(tabcell.getCat())) {
@@ -100,6 +105,20 @@ public class TableResult
             this.gameBoard.getGameRoom().setLastTurnCalculated(true);
         }
     }
+    
+    private synchronized void calculateTotal()
+    {
+        if (!this.gameBoard.getGameRoom().isLastUpdateCalculated()) {
+            final Map<GameUser, TableRow> mapRes = this.gameBoard.getGameRoom().getResults()
+                            .get(this.gameBoard.getGameRoom().getResults().size() - 1);
+
+            for (Entry<GameUser, TableRow> entry : mapRes.entrySet()) {
+                entry.getValue().calculate();
+                entry.getKey().setScoreLastTurn(entry.getValue().getTotal());
+            }
+            this.gameBoard.getGameRoom().setLastUpdateCalculated(true);
+        }
+    }
 
     private void buildGameBoard()
     {
@@ -124,15 +143,92 @@ public class TableResult
             Label label = new Label(entry.getKey().getUserName());
             row.appendChild(label);
             for (final TableCell tabcell : entry.getValue().getCells()) {
-                Vbox vbox = new Vbox();
-                label = new Label(tabcell.getData() == null 
-                                || tabcell.getData().isEmpty() 
-                                || tabcell.getData().length() == 1 
-                                ? " - " : tabcell.getData());
-                vbox.appendChild(label);
-                label = new Label("" + tabcell.getStatus());
-                vbox.appendChild(label);
-                row.appendChild(vbox);
+                if (entry.getKey().equals(this.gameBoard.getGameUser())) {
+                    Vbox vbox = new Vbox();
+                    label = new Label(tabcell.getData() == null 
+                                    || tabcell.getData().isEmpty() 
+                                    || tabcell.getData().length() == 1 
+                                    ? " - " : tabcell.getData());
+                    vbox.appendChild(label);
+                    label = new Label("" + tabcell.getStatus());
+                    vbox.appendChild(label);
+                    row.appendChild(vbox);
+                } else {
+                    Hbox hbox = new Hbox();
+                    hbox.setPack("center");
+                    label = new Label(tabcell.getData() == null 
+                                    || tabcell.getData().isEmpty() 
+                                    || tabcell.getData().length() == 1 
+                                    ? " - " : tabcell.getData());
+                    hbox.appendChild(label);
+                    Vbox vbox = new Vbox();
+                    vbox.setHflex("1");;
+                    Button btnLose = new Button();
+                    btnLose.setLabel(""+Constants.CELL_LOSE);
+                    btnLose.setHflex("1");;
+                    btnLose.setDisabled(Constants.CELL_LOSE.equals(tabcell.getStatus()));
+                    vbox.appendChild(btnLose);
+                    Button btnDraw = new Button();
+                    btnDraw.setLabel(""+Constants.CELL_DRAW);
+                    btnDraw.setHflex("1");;
+                    btnDraw.setDisabled(Constants.CELL_DRAW.equals(tabcell.getStatus()));
+                    vbox.appendChild(btnDraw);
+                    Button btnWin = new Button();
+                    btnWin.setLabel(""+Constants.CELL_WIN);
+                    btnWin.setHflex("1");;
+                    btnWin.setDisabled(Constants.CELL_WIN.equals(tabcell.getStatus()));
+                    vbox.appendChild(btnWin);
+                    btnLose.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+                    {
+                        @Override
+                        public void onEvent(Event _event)
+                            throws Exception
+                        {
+                            ((Button) _event.getTarget()).setDisabled(true);
+                            btnDraw.setDisabled(false);
+                            btnWin.setDisabled(false);
+                            tabcell.setStatus(Constants.CELL_LOSE);
+                            GameMessage msg = new GameMessage("", gameBoard.getGameUser().getUserName(), 
+                                            Constants.RESULT_GAME, null);
+                            gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                            gameBoard.getGameRoom().broadcastResultAll(msg);
+                        }
+                    });
+                    btnDraw.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+                    {
+                        @Override
+                        public void onEvent(Event _event)
+                            throws Exception
+                        {
+                            ((Button) _event.getTarget()).setDisabled(true);
+                            btnLose.setDisabled(false);
+                            btnWin.setDisabled(false);
+                            tabcell.setStatus(Constants.CELL_DRAW);
+                            GameMessage msg = new GameMessage("", gameBoard.getGameUser().getUserName(), 
+                                            Constants.RESULT_GAME, null);
+                            gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                            gameBoard.getGameRoom().broadcastResultAll(msg);
+                        }
+                    });
+                    btnWin.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+                    {
+                        @Override
+                        public void onEvent(Event _event)
+                            throws Exception
+                        {
+                            ((Button) _event.getTarget()).setDisabled(true);
+                            btnDraw.setDisabled(false);
+                            btnLose.setDisabled(false);
+                            tabcell.setStatus(Constants.CELL_WIN);
+                            GameMessage msg = new GameMessage("", gameBoard.getGameUser().getUserName(), 
+                                            Constants.RESULT_GAME, null);
+                            gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                            gameBoard.getGameRoom().broadcastResultAll(msg);
+                        }
+                    });
+                    hbox.appendChild(vbox);
+                    row.appendChild(hbox);
+                }
             }
             label = new Label("" + entry.getValue().getTotal());
             row.appendChild(label);
@@ -144,6 +240,13 @@ public class TableResult
     public void refresh() {
         this.grdTableResult.getColumns().getChildren().clear();
         this.grdTableResult.getRows().getChildren().clear();
+        calculateTotal();
         buildGameBoard();
+    }
+    
+    @Listen("onBroadcastResult = #winTabRes")
+    public void onBroadcastResult(final Event event)
+    {
+        refresh();
     }
 }

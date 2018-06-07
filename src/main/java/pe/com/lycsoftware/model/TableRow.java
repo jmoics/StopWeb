@@ -10,7 +10,8 @@ public class TableRow
     private Integer total;
     
     public TableRow() {
-        cells = new LinkedList<TableCell>();
+        this.cells = new LinkedList<TableCell>();
+        this.total = 0;
     }
     
     public Integer getTurn()
@@ -45,9 +46,10 @@ public class TableRow
     
     public void calculate() 
     {
+        Integer total = 0;
         for (TableCell cell : this.cells) {
-            this.total = this.total + cell.getStatus();
+            total = total + cell.getStatus();
         }
+        this.total = total;
     }
-    
 }
