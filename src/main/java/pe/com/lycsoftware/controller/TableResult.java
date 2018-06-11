@@ -17,6 +17,10 @@ import org.zkoss.zul.Column;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Menu;
+import org.zkoss.zul.Menubar;
+import org.zkoss.zul.Menuitem;
+import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Vbox;
 import org.zkoss.zul.Window;
@@ -51,6 +55,7 @@ public class TableResult
 
         calculate();
         buildGameBoard();
+        this.btnRefresh.setFocus(true);
     }
     
     private synchronized void calculate()
@@ -154,86 +159,160 @@ public class TableResult
                     vbox.appendChild(label);
                     row.appendChild(vbox);
                 } else {
-                    Hbox hbox = new Hbox();
-                    hbox.setPack("center");
+                    Vbox vbox = new Vbox();
+                    vbox.setPack("center");
+                    vbox.setHflex("1");
                     label = new Label(tabcell.getData() == null 
                                     || tabcell.getData().isEmpty() 
                                     || tabcell.getData().length() == 1 
                                     ? " - " : tabcell.getData());
-                    hbox.appendChild(label);
-                    Vbox vbox = new Vbox();
-                    vbox.setHflex("1");;
-                    Button btnLose = new Button();
-                    btnLose.setLabel(""+Constants.CELL_LOSE);
-                    btnLose.setHflex("1");;
-                    btnLose.setDisabled(Constants.CELL_LOSE.equals(tabcell.getStatus()));
-                    vbox.appendChild(btnLose);
-                    Button btnDraw = new Button();
-                    btnDraw.setLabel(""+Constants.CELL_DRAW);
-                    btnDraw.setHflex("1");;
-                    btnDraw.setDisabled(Constants.CELL_DRAW.equals(tabcell.getStatus()));
-                    vbox.appendChild(btnDraw);
-                    Button btnWin = new Button();
-                    btnWin.setLabel(""+Constants.CELL_WIN);
-                    btnWin.setHflex("1");;
-                    btnWin.setDisabled(Constants.CELL_WIN.equals(tabcell.getStatus()));
-                    vbox.appendChild(btnWin);
-                    btnLose.addEventListener(Events.ON_CLICK, new EventListener<Event>()
-                    {
-                        @Override
-                        public void onEvent(Event _event)
-                            throws Exception
-                        {
-                            ((Button) _event.getTarget()).setDisabled(true);
-                            btnDraw.setDisabled(false);
-                            btnWin.setDisabled(false);
-                            tabcell.setStatus(Constants.CELL_LOSE);
-                            GameMessage msg = new GameMessage("", gameBoard.getGameUser().getUserName(), 
-                                            Constants.RESULT_GAME, null);
-                            gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                            gameBoard.getGameRoom().broadcastResultAll(msg);
-                        }
-                    });
-                    btnDraw.addEventListener(Events.ON_CLICK, new EventListener<Event>()
-                    {
-                        @Override
-                        public void onEvent(Event _event)
-                            throws Exception
-                        {
-                            ((Button) _event.getTarget()).setDisabled(true);
-                            btnLose.setDisabled(false);
-                            btnWin.setDisabled(false);
-                            tabcell.setStatus(Constants.CELL_DRAW);
-                            GameMessage msg = new GameMessage("", gameBoard.getGameUser().getUserName(), 
-                                            Constants.RESULT_GAME, null);
-                            gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                            gameBoard.getGameRoom().broadcastResultAll(msg);
-                        }
-                    });
-                    btnWin.addEventListener(Events.ON_CLICK, new EventListener<Event>()
-                    {
-                        @Override
-                        public void onEvent(Event _event)
-                            throws Exception
-                        {
-                            ((Button) _event.getTarget()).setDisabled(true);
-                            btnDraw.setDisabled(false);
-                            btnLose.setDisabled(false);
-                            tabcell.setStatus(Constants.CELL_WIN);
-                            GameMessage msg = new GameMessage("", gameBoard.getGameUser().getUserName(), 
-                                            Constants.RESULT_GAME, null);
-                            gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                            gameBoard.getGameRoom().broadcastResultAll(msg);
-                        }
-                    });
-                    hbox.appendChild(vbox);
-                    row.appendChild(hbox);
+                    vbox.appendChild(label);
+                    buildResultWithButtons(tabcell, vbox);
+                    row.appendChild(vbox);
                 }
             }
             label = new Label("" + entry.getValue().getTotal());
             row.appendChild(label);
             this.grdTableResult.getRows().appendChild(row);
         }
+    }
+    
+    private void buildResultWithButtons(TableCell tabcell, 
+                                        Vbox vbox) {
+        Hbox hbox = new Hbox();
+        hbox.setHflex("1");
+        Button btnLose = new Button();
+        btnLose.setStyle("padding-left: 2px; padding-right: 2px;");
+        btnLose.setLabel(""+Constants.CELL_LOSE);
+        //btnLose.setImage("/media/error-16.png");
+        btnLose.setHflex("1");;
+        btnLose.setDisabled(Constants.CELL_LOSE.equals(tabcell.getStatus()));
+        hbox.appendChild(btnLose);
+        Button btnDraw = new Button();
+        btnDraw.setStyle("padding-left: 2px; padding-right: 2px;");
+        btnDraw.setLabel(""+Constants.CELL_DRAW);
+        //btnDraw.setImage("/media/draw-16.png");
+        btnDraw.setHflex("1");;
+        btnDraw.setDisabled(Constants.CELL_DRAW.equals(tabcell.getStatus()));
+        hbox.appendChild(btnDraw);
+        Button btnWin = new Button();
+        btnWin.setStyle("padding-left: 2px; padding-right: 2px;");
+        btnWin.setLabel(""+Constants.CELL_WIN);
+        //btnWin.setImage("/media/ok-16.png");
+        btnWin.setHflex("1");;
+        btnWin.setDisabled(Constants.CELL_WIN.equals(tabcell.getStatus()));
+        hbox.appendChild(btnWin);
+        vbox.appendChild(hbox);
+        btnLose.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+        {
+            @Override
+            public void onEvent(Event _event)
+                throws Exception
+            {
+                ((Button) _event.getTarget()).setDisabled(true);
+                btnDraw.setDisabled(false);
+                btnWin.setDisabled(false);
+                tabcell.setStatus(Constants.CELL_LOSE);
+                GameMessage msg = new GameMessage("", gameBoard.getGameUser(), 
+                                Constants.RESULT_GAME, null);
+                gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                gameBoard.getGameRoom().broadcastResultAll(msg);
+            }
+        });
+        btnDraw.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+        {
+            @Override
+            public void onEvent(Event _event)
+                throws Exception
+            {
+                ((Button) _event.getTarget()).setDisabled(true);
+                btnLose.setDisabled(false);
+                btnWin.setDisabled(false);
+                tabcell.setStatus(Constants.CELL_DRAW);
+                GameMessage msg = new GameMessage("", gameBoard.getGameUser(), 
+                                Constants.RESULT_GAME, null);
+                gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                gameBoard.getGameRoom().broadcastResultAll(msg);
+            }
+        });
+        btnWin.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+        {
+            @Override
+            public void onEvent(Event _event)
+                throws Exception
+            {
+                ((Button) _event.getTarget()).setDisabled(true);
+                btnDraw.setDisabled(false);
+                btnLose.setDisabled(false);
+                tabcell.setStatus(Constants.CELL_WIN);
+                GameMessage msg = new GameMessage("", gameBoard.getGameUser(), 
+                                Constants.RESULT_GAME, null);
+                gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                gameBoard.getGameRoom().broadcastResultAll(msg);
+            }
+        });
+    }
+    
+    private void buildResultsWithMenu(TableCell tabcell, 
+                                      Vbox vbox) {
+        Menubar menubar = new Menubar();
+        Menu menuChoose = new Menu();
+        menubar.appendChild(menuChoose);
+        Menupopup menupop = new Menupopup();
+        menuChoose.appendChild(menupop);
+        menuChoose.setLabel(String.valueOf(tabcell.getStatus()));
+        Menuitem itemLose = new Menuitem(""+Constants.CELL_LOSE);
+        itemLose.setImage("/media/error-16.png");
+        menuChoose.getMenupopup().appendChild(itemLose);
+        Menuitem itemDraw = new Menuitem(""+Constants.CELL_DRAW);
+        itemDraw.setImage("/media/draw-16.png");
+        menuChoose.getMenupopup().appendChild(itemDraw);
+        Menuitem itemWin = new Menuitem(""+Constants.CELL_WIN);
+        itemWin.setImage("/media/ok-16.png");
+        menuChoose.getMenupopup().appendChild(itemWin);
+        itemLose.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+        {
+            @Override
+            public void onEvent(Event _event)
+                throws Exception
+            {
+                tabcell.setStatus(Constants.CELL_LOSE);
+                menuChoose.setLabel(String.valueOf(tabcell.getStatus()));
+                GameMessage msg = new GameMessage("", gameBoard.getGameUser(), 
+                                Constants.RESULT_GAME, null);
+                gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                gameBoard.getGameRoom().broadcastResultAll(msg);
+            }
+        });
+        itemDraw.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+        {
+            @Override
+            public void onEvent(Event _event)
+                throws Exception
+            {
+                tabcell.setStatus(Constants.CELL_DRAW);
+                menuChoose.setLabel(String.valueOf(tabcell.getStatus()));
+                GameMessage msg = new GameMessage("", gameBoard.getGameUser(), 
+                                Constants.RESULT_GAME, null);
+                gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                gameBoard.getGameRoom().broadcastResultAll(msg);
+            }
+        });
+        itemWin.addEventListener(Events.ON_CLICK, new EventListener<Event>()
+        {
+            @Override
+            public void onEvent(Event _event)
+                throws Exception
+            {
+                tabcell.setStatus(Constants.CELL_WIN);
+                menuChoose.setLabel(String.valueOf(tabcell.getStatus()));
+                GameMessage msg = new GameMessage("", gameBoard.getGameUser(), 
+                                Constants.RESULT_GAME, null);
+                gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                gameBoard.getGameRoom().broadcastResultAll(msg);
+            }
+        });
+        vbox.appendChild(menubar);
     }
 
     @Listen("onClick = #btnRefresh")

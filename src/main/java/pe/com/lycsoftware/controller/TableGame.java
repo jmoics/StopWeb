@@ -21,6 +21,7 @@ import org.zkoss.zul.Column;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Popup;
 import org.zkoss.zul.Row;
@@ -41,8 +42,9 @@ public class TableGame
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TableGame.class);
     @Wire
-    private Grid grdTableGame, grdGamers;
-    private GameBoard gameBoard;
+    private Grid grdTableGame;
+    @Wire
+    private Listbox lstGamers;
     @Wire
     private Button btnStart;
     @Wire
@@ -53,6 +55,7 @@ public class TableGame
     private Checkbox chbReady;
     @Wire
     private Popup popLog;
+    private GameBoard gameBoard;
 
     @Override
     public void doAfterCompose(final Window comp)
@@ -67,6 +70,32 @@ public class TableGame
         final GameMessage gameMessage = (GameMessage) mapArg.get(Constants.INIT_MESSAGE);
         buildGameBoard();
         appendMessage(gameMessage);
+        buildUserList();
+    }
+    
+    private void buildUserList() {
+        for (GameUser user : this.gameBoard.getGameRoom().getGameUsers()) {
+            addUser2List(user);
+        }
+    }
+    
+    private void addUser2List(GameUser _user) {
+        Listitem item = new Listitem();
+        item.setValue(_user);
+        Listcell cell = new Listcell(_user.getUserName());
+        item.appendChild(cell);
+        cell = new Listcell();
+        cell.setImage(_user.isReady() ? "/media/circle-green.png" : "/media/circle-gray.png");
+        item.appendChild(cell);
+        this.lstGamers.appendChild(item);
+    }
+    
+    private void updateUserStatus() {
+        for (Listitem itemUs : this.lstGamers.getItems()) {
+            Listcell cellUs = (Listcell) itemUs.getLastChild();
+            cellUs.setImage(((GameUser) itemUs.getValue()).isReady() 
+                            ? "/media/circle-green.png" : "/media/circle-gray.png");
+        }
     }
 
     private void saveGameBoard()
@@ -200,9 +229,11 @@ public class TableGame
                 break;
             case Constants.JOIN_GAME:
                 LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> joining game: " + msg.getContent());
+                addUser2List(msg.getSender());
                 break;
             case Constants.READY_GAME:
                 LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user ready for game: " + msg.getContent());
+                updateUserStatus();
                 break;
             case Constants.LOGOUT_GAME:
                 LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user leave the game: " + msg.getContent());
@@ -218,7 +249,7 @@ public class TableGame
     {
         if (this.gameBoard.getGameRoom().isReadyPlayers() && !this.gameBoard.getGameRoom().isInGame()) {
             final GameMessage gameMessage = new GameMessage("Turno Iniciado",
-                            this.gameBoard.getGameUser().getUserName(), Constants.START_GAME, generateRandomLetter());
+                            this.gameBoard.getGameUser(), Constants.START_GAME, generateRandomLetter());
             this.gameBoard.getGameRoom().setInGame(true);
             this.gameBoard.getGameRoom().setLastTurnCalculated(false);
             this.gameBoard.getGameRoom().broadcastAll(gameMessage);
@@ -231,7 +262,7 @@ public class TableGame
     public void stopGame(final MouseEvent _event)
     {
         final GameMessage gameMessage = new GameMessage("Turno Terminado",
-                        this.gameBoard.getGameUser().getUserName(), Constants.STOP_GAME, null);
+                        this.gameBoard.getGameUser(), Constants.STOP_GAME, null);
         // GameRoom gameRoom = (GameRoom)
         // this.getSelf().getDesktop().getWebApp().getAttribute(this.gameBoard.getGameRoom().getName());
         // gameRoom.setReadyPlayers(false);
@@ -250,7 +281,7 @@ public class TableGame
     public void logout(final MouseEvent _event)
     {
         final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " dejó el juego",
-                        this.gameBoard.getGameUser().getUserName(), Constants.LOGOUT_GAME, null);
+                        this.gameBoard.getGameUser(), Constants.LOGOUT_GAME, null);
         Sessions.getCurrent().removeAttribute(Constants.GAMEBOARD_KEY);
         this.gameBoard.getGameUser().cleanUp();
         this.gameBoard.getGameRoom().broadcast(gameMessage);
@@ -259,18 +290,32 @@ public class TableGame
     @Listen("onCheck = #chbReady")
     public void readyGame(final Event _event)
     {
-        this.gameBoard.getGameUser().setReady(true);
-        final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " se encuentra listo",
-                        this.gameBoard.getGameUser().getUserName(), Constants.READY_GAME, null);
-        this.gameBoard.getGameRoom().broadcast(gameMessage);
-        if (this.gameBoard.getGameRoom().checkReady4All()) {
-            this.gameBoard.getGameRoom().setReadyPlayers(true);
+        if (((Checkbox)_event.getTarget()).isChecked()) {
+            this.gameBoard.getGameUser().setReady(true);
+            final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " se encuentra listo",
+                            this.gameBoard.getGameUser(), Constants.READY_GAME, null);
+            this.gameBoard.getGameRoom().broadcast(gameMessage);
+            updateUserStatus();
+            if (this.gameBoard.getGameRoom().checkReady4All()) {
+                this.gameBoard.getGameRoom().setReadyPlayers(true);
+            }
+        } else {
+            this.gameBoard.getGameUser().setReady(false);
+            final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " no se encuentra listo",
+                            this.gameBoard.getGameUser(), Constants.READY_GAME, null);
+            this.gameBoard.getGameRoom().broadcast(gameMessage);
+            updateUserStatus();
+            if (this.gameBoard.getGameRoom().checkReady4All()) {
+                this.gameBoard.getGameRoom().setReadyPlayers(true);
+            } else {
+                this.gameBoard.getGameRoom().setReadyPlayers(false);
+            }
         }
     }
 
     public void appendMessage(final GameMessage _message)
     {
-        this.lstMessages.appendChild(new Listitem(_message.getSender() + " - " + _message.getContent()));
+        this.lstMessages.appendChild(new Listitem(_message.getSender().getUserName() + " - " + _message.getContent()));
     }
 
     private String generateRandomLetter()

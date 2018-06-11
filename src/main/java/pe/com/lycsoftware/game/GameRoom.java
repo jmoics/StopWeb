@@ -38,7 +38,7 @@ public class GameRoom
     {
         synchronized (this.gameUsers) {
             for (final GameUser gameUser : this.gameUsers)
-                if (gameUser.getUserName().compareTo(msg.getSender()) != 0) {
+                if (gameUser.getUserName().compareTo(msg.getSender().getUserName()) != 0) {
                     gameUser.addGameMessage(msg);
                 }
         }
@@ -57,7 +57,7 @@ public class GameRoom
     {
         synchronized (this.gameUsers) {
             for (final GameUser gameUser : this.gameUsers) {
-                if (gameUser.getUserName().compareTo(msg.getSender()) != 0) {
+                if (gameUser.getUserName().compareTo(msg.getSender().getUserName()) != 0) {
                     gameUser.addGameMessage(msg);
                 }
             }

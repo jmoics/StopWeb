@@ -79,14 +79,14 @@ public class IndexCtrl
 
             this.gameUser = new GameUser(this.gameRoom, this.userName, this.getSelf().getDesktop());
             // broadcast
-            this.gameRoom.broadcast(new GameMessage(this.userName + " se a unido al juego", this.userName));
+            this.gameRoom.broadcast(new GameMessage(this.userName + " se a unido al juego", this.gameUser));
             this.gameUser.start();
             LOGGER.info("User: " + this.gameUser.getUserName() + " --> " + this.gameUser.getName());
             // set the MessageBoard to the session
             this.gameBoard = new GameBoard(this.gameUser, this.gameRoom);
             Sessions.getCurrent().setAttribute(Constants.GAMEBOARD_KEY, this.gameBoard);
             // welcome message
-            final GameMessage msg = new GameMessage("Bienvenido al juego " + this.userName, this.userName);
+            final GameMessage msg = new GameMessage("Bienvenido al juego " + this.userName, this.gameUser);
             // refresh UI
             // displayChatGrid();
             final Map<String, GameMessage> map = new HashMap<>();

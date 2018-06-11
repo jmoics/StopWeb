@@ -20,13 +20,12 @@
             </hbox>
         </vbox>
         <separator width="10px"></separator>
-        <grid id="grdGamers" hflex="2">
-            <columns>
-                <column label="Usuario" hflex="1"></column>
-                <column label="Estado" hflex="1"></column>
-            </columns>
-            <rows></rows>
-        </grid>
+        <listbox id="lstGamers" hflex="2">
+            <listhead>
+                <listheader label="Usuario" hflex="1"/>
+                <listheader label="Estado" hflex="1"/>
+            </listhead>
+        </listbox>
     </hbox>
     <popup id="popLog" hflex="1">
         <listbox id="lstMessages" width="600px">
