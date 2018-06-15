@@ -31,7 +31,6 @@ public class IndexCtrl
     extends SelectorComposer<Window>
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexCtrl.class);
-    private static final String GAMEROOM_PREFIX = "game_room_";
     @Wire
     private Textbox txtName;
     @Wire
@@ -66,7 +65,8 @@ public class IndexCtrl
     {
         this.userName = this.txtName.getValue();
         String gameRoomName = this.rowCreateRoom.isVisible() 
-                        ? GAMEROOM_PREFIX + this.txtGameRoom.getValue() : GAMEROOM_PREFIX + this.cmbGameRoom.getValue();
+                        ? Constants.GAMEROOM_PREFIX + this.txtGameRoom.getValue() 
+                        : Constants.GAMEROOM_PREFIX + this.cmbGameRoom.getValue();
         this.gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(gameRoomName);
         if (this.gameRoom == null) {
             this.gameRoom = new GameRoom(this.txtGameRoom.getValue());
@@ -112,7 +112,7 @@ public class IndexCtrl
     private void buildGameRoomCombo() {
         Map<String, Object> mapGameRooms = this.getSelf().getDesktop().getWebApp().getAttributes();
         for (Entry<String, Object> entry : mapGameRooms.entrySet()) {
-            if (entry.getKey().startsWith(GAMEROOM_PREFIX)) {
+            if (entry.getKey().startsWith(Constants.GAMEROOM_PREFIX)) {
                 Comboitem item = new Comboitem();
                 item.setValue(entry.getValue());
                 item.setLabel(((GameRoom) entry.getValue()).getName());

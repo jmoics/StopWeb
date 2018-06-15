@@ -11,4 +11,8 @@
     <system-config>
         <disable-event-thread>false</disable-event-thread>
     </system-config>
+    <library-property>
+        <name>org.zkoss.theme.preferred</name>
+        <value>sapphire</value>
+    </library-property>
 </zk>

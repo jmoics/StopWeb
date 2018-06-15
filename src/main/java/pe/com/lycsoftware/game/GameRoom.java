@@ -16,7 +16,6 @@ public class GameRoom
     private final List<GameUser> gameUsers;
     private final List<Map<GameUser, TableRow>> results;
     private final List<Map<Category, TableColumn>> resultsCalc;
-    private boolean readyPlayers;
     private boolean inGame;
     private boolean lastTurnCalculated;
     private boolean lastUpdateCalculated;;
@@ -82,6 +81,15 @@ public class GameRoom
             }
         }
         return ret;
+    }
+    
+    public void notReady4All()
+    {
+        synchronized (this.gameUsers) {
+            for (final GameUser gameUser : this.gameUsers) {
+                gameUser.setReady(false);
+            }
+        }
     }
 
     public String getName()
@@ -152,16 +160,6 @@ public class GameRoom
         synchronized (gameUsers) {
             gameUsers.remove(getGameUser(nickname));
         }
-    }
-
-    public boolean isReadyPlayers()
-    {
-        return readyPlayers;
-    }
-
-    public void setReadyPlayers(final boolean readyPlayers)
-    {
-        this.readyPlayers = readyPlayers;
     }
     
     public boolean isInGame()

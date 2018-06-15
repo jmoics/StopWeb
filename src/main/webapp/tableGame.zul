@@ -1,12 +1,23 @@
 <zk>
-<window id="winTabGam" border="none" apply="pe.com.lycsoftware.controller.TableGame">
-    <hbox hflex="1">
-        <vbox hflex="18">
+<window id="winTabGam" border="none" apply="pe.com.lycsoftware.controller.TableGame"
+        height="100%" width="100%">
+    <borderlayout hflex="1" vflex="1">
+        <center autoscroll="true">
             <grid id="grdTableGame">
                 <columns></columns>
                 <rows></rows>
             </grid>
-            <hbox>
+        </center>
+        <east size="120px">
+            <listbox id="lstGamers" hflex="5">
+                <listhead>
+                    <listheader label="Usuario" hflex="3"/>
+                    <listheader label="Estado" hflex="2"/>
+                </listhead>
+            </listbox>
+        </east>
+        <south vflex="1">
+            <hbox style="margin-top: 5px; margin-bottom:5px; margin-left: 5px;">
                 <button id="btnStart" label="Start">
                 </button>
                 <button id="btnStop" label="Stop" visible="false">
@@ -18,15 +29,8 @@
                 <label value="Listo para iniciar"></label>
                 <checkbox id="chbReady"></checkbox>
             </hbox>
-        </vbox>
-        <separator width="10px"></separator>
-        <listbox id="lstGamers" hflex="2">
-            <listhead>
-                <listheader label="Usuario" hflex="1"/>
-                <listheader label="Estado" hflex="1"/>
-            </listhead>
-        </listbox>
-    </hbox>
+        </south>
+    </borderlayout>
     <popup id="popLog" hflex="1">
         <listbox id="lstMessages" width="600px">
             <listhead>

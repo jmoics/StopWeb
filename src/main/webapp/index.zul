@@ -19,12 +19,12 @@
                 <row>
                     <label value="Nombre"></label>
                     <textbox id="txtName" style="width:160px;"
-                        constraint="no empty" />
+                        constraint="no empty" maxlength="10"/>
                 </row>
                 <row id="rowCreateRoom">
                     <label value="Sala de Juego"></label>
                     <textbox id="txtGameRoom" style="width:160px;"
-                        constraint="no empty" />
+                        constraint="no empty" maxlength="10"/>
                 </row>
                 <row id="rowJoinRoom">
                     <label value="Sala de Juego"></label>

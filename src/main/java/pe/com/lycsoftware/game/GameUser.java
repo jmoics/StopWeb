@@ -26,6 +26,7 @@ public class GameUser
     private Integer score;
     private Integer scoreLastTurn;
     private boolean finishGame;
+    private boolean logout;
     private boolean ready;
     // private boolean endTurn;
     private GameMessage gameMessage;
@@ -53,7 +54,7 @@ public class GameUser
             this.desktop.enableServerPush(true);
         LOGGER.info("Active chatUser thread: " + getName());
         // try {
-        while (!this.finishGame) {
+        while (!this.finishGame || !this.logout) {
             try {
                 if (this.gameMessage == null) {
                     Threads.sleep(100);// Update each 0.5 seconds
@@ -71,7 +72,7 @@ public class GameUser
                 }
             } catch (final DesktopUnavailableException ex) {
                 LOGGER.info("Browser exited.");
-                cleanUp();
+                logout();
             } catch (final Throwable ex) {
                 LOGGER.error("Error in thread", ex);
                 throw UiException.Aide.wrap(ex);
@@ -103,17 +104,15 @@ public class GameUser
         this.gameMessage = null;
     }
 
-    /**
-     * Task: Clean up before stopping thread.
-     */
-    public void cleanUp()
+    public void logout()
     {
         LOGGER.info(getUserName() + " has logged out of the gameroom!");
         this.gameRoom.remove(this);
         this.gameMessage = null;
-        if (desktop.isServerPushEnabled())
+        if (desktop.isServerPushEnabled()) {
             Executions.getCurrent().getDesktop().enableServerPush(false);
-        // setEndTurn();
+        }
+        this.logout = true;
     }
 
     public String getUserName()
@@ -156,6 +155,16 @@ public class GameUser
         this.ready = ready;
     }
     
+    public boolean isLogout()
+    {
+        return logout;
+    }
+    
+    public void setLogout(boolean logout)
+    {
+        this.logout = logout;
+    }
+
     public Integer getScoreLastTurn()
     {
         return scoreLastTurn;

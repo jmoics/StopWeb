@@ -85,7 +85,8 @@ public class TableGame
         Listcell cell = new Listcell(_user.getUserName());
         item.appendChild(cell);
         cell = new Listcell();
-        cell.setImage(_user.isReady() ? "/media/circle-green.png" : "/media/circle-gray.png");
+        cell.setImage(!_user.isLogout() ? (_user.isReady() ? "/media/circle-green.png" : "/media/circle-orange.png")
+                        : "/media/circle-gray.png");
         item.appendChild(cell);
         this.lstGamers.appendChild(item);
     }
@@ -93,8 +94,9 @@ public class TableGame
     private void updateUserStatus() {
         for (Listitem itemUs : this.lstGamers.getItems()) {
             Listcell cellUs = (Listcell) itemUs.getLastChild();
-            cellUs.setImage(((GameUser) itemUs.getValue()).isReady() 
-                            ? "/media/circle-green.png" : "/media/circle-gray.png");
+            cellUs.setImage(!((GameUser) itemUs.getValue()).isLogout() ? 
+                    (((GameUser) itemUs.getValue()).isReady()  ? "/media/circle-green.png" : "/media/circle-orange.png")
+                    : "/media/circle-gray.png");
         }
     }
 
@@ -221,8 +223,8 @@ public class TableGame
                         }
                     }
                 }
-                this.gameBoard.getGameUser().setReady(false);
                 this.chbReady.setChecked(false);
+                updateUserStatus();
                 saveGameBoard();
                 buildGameBoard();
                 runWindowResult();
@@ -247,7 +249,7 @@ public class TableGame
     @Listen("onClick = #btnStart")
     public void startGame(final MouseEvent _event)
     {
-        if (this.gameBoard.getGameRoom().isReadyPlayers() && !this.gameBoard.getGameRoom().isInGame()) {
+        if (this.gameBoard.getGameRoom().checkReady4All() && !this.gameBoard.getGameRoom().isInGame()) {
             final GameMessage gameMessage = new GameMessage("Turno Iniciado",
                             this.gameBoard.getGameUser(), Constants.START_GAME, generateRandomLetter());
             this.gameBoard.getGameRoom().setInGame(true);
@@ -267,7 +269,7 @@ public class TableGame
         // this.getSelf().getDesktop().getWebApp().getAttribute(this.gameBoard.getGameRoom().getName());
         // gameRoom.setReadyPlayers(false);
         this.gameBoard.getGameRoom().setInGame(false);
-        this.gameBoard.getGameRoom().setReadyPlayers(false);
+        this.gameBoard.getGameRoom().notReady4All();
         this.gameBoard.getGameRoom().broadcastAll(gameMessage);
     }
 
@@ -283,8 +285,18 @@ public class TableGame
         final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " dejó el juego",
                         this.gameBoard.getGameUser(), Constants.LOGOUT_GAME, null);
         Sessions.getCurrent().removeAttribute(Constants.GAMEBOARD_KEY);
-        this.gameBoard.getGameUser().cleanUp();
+        this.gameBoard.getGameUser().logout();
         this.gameBoard.getGameRoom().broadcast(gameMessage);
+        if (this.gameBoard.getGameRoom().getGameUsers().size() == 1) {
+            finishGame();
+        }
+        Executions.sendRedirect("index.zul");
+    }
+    
+    public void finishGame() 
+    {
+        this.getSelf().getDesktop().getWebApp().removeAttribute(Constants.GAMEROOM_PREFIX 
+                        + this.gameBoard.getGameRoom().getName());
     }
 
     @Listen("onCheck = #chbReady")
@@ -296,20 +308,12 @@ public class TableGame
                             this.gameBoard.getGameUser(), Constants.READY_GAME, null);
             this.gameBoard.getGameRoom().broadcast(gameMessage);
             updateUserStatus();
-            if (this.gameBoard.getGameRoom().checkReady4All()) {
-                this.gameBoard.getGameRoom().setReadyPlayers(true);
-            }
         } else {
             this.gameBoard.getGameUser().setReady(false);
             final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " no se encuentra listo",
                             this.gameBoard.getGameUser(), Constants.READY_GAME, null);
             this.gameBoard.getGameRoom().broadcast(gameMessage);
             updateUserStatus();
-            if (this.gameBoard.getGameRoom().checkReady4All()) {
-                this.gameBoard.getGameRoom().setReadyPlayers(true);
-            } else {
-                this.gameBoard.getGameRoom().setReadyPlayers(false);
-            }
         }
     }
 
