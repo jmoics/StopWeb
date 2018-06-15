@@ -305,7 +305,7 @@ public class TableGame
         Sessions.getCurrent().removeAttribute(Constants.GAMEBOARD_KEY);
         this.gameBoard.getGameUser().logout();
         this.gameBoard.getGameRoom().broadcast(gameMessage);
-        if (this.gameBoard.getGameRoom().getGameUsers().size() == 1) {
+        if (this.gameBoard.getGameRoom().getGameUsers().size() == 0) {
             finishGame();
         }
         Executions.sendRedirect("index.zul");

@@ -9,15 +9,31 @@
             </grid>
         </center>
         <east size="120px">
-            <listbox id="lstGamers" hflex="5">
-                <listhead>
-                    <listheader label="Usuario" hflex="3"/>
-                    <listheader label="Estado" hflex="2"/>
-                </listhead>
-            </listbox>
+            <vbox>
+                <listbox id="lstGamers" hflex="7">
+                    <listhead>
+                        <listheader label="Usuario" hflex="4"/>
+                        <listheader label="Estado" hflex="3"/>
+                    </listhead>
+                </listbox>
+                <hbox style="margin-top: 20px;">
+                    <listbox hflex="7">
+                        <listhead>
+                            <listheader hflex="4"/>
+                            <listheader hflex="3"/>
+                        </listhead>
+                        <listitem>
+                            <listcell label="Listo"/>
+                            <listcell>
+                                <checkbox id="chbReady"></checkbox>
+                            </listcell>
+                        </listitem>
+                    </listbox>
+                </hbox>
+            </vbox>
         </east>
-        <south vflex="1">
-            <hbox style="margin-top: 5px; margin-bottom:5px; margin-left: 5px;">
+        <south vflex="1" hflex="1">
+            <hbox style="margin-top: 5px; margin-bottom:5px; margin-left: 5px;" pack="center" align="center" hflex="1">
                 <button id="btnStart" label="Start">
                 </button>
                 <button id="btnStop" label="Stop" visible="false">
@@ -26,8 +42,6 @@
                 </button>
                 <button id="btnLogout" label="Logout">
                 </button>
-                <label value="Listo para iniciar"></label>
-                <checkbox id="chbReady"></checkbox>
             </hbox>
         </south>
     </borderlayout>
