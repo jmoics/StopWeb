@@ -32,9 +32,9 @@
                 </row>
             </rows>
         </grid>
-        <hbox>
-            <button id="btnLogin" label="Entrar" />
+        <hbox hflex="1" pack="end">
             <button id="btnBack" label="Atrás" />
+            <button id="btnLogin" label="Entrar" />
         </hbox>
     </vbox>
 </vbox>

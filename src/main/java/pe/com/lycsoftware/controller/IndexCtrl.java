@@ -30,6 +30,7 @@ import pe.com.lycsoftware.util.Constants;
 public class IndexCtrl
     extends SelectorComposer<Window>
 {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexCtrl.class);
     @Wire
     private Textbox txtName;
@@ -60,77 +61,99 @@ public class IndexCtrl
         super.doAfterCompose(comp);
     }
 
-    @Listen("onClick = #btnLogin")
+    @Listen("onClick = #btnLogin; onOK = #txtGameRoom; onOK = #cmbGameRoom")
     public void login()
     {
-        this.userName = this.txtName.getValue();
-        String gameRoomName = this.rowCreateRoom.isVisible() 
-                        ? Constants.GAMEROOM_PREFIX + this.txtGameRoom.getValue() 
-                        : Constants.GAMEROOM_PREFIX + this.cmbGameRoom.getValue();
-        this.gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(gameRoomName);
-        if (this.gameRoom == null) {
-            this.gameRoom = new GameRoom(this.txtGameRoom.getValue());
-            this.getSelf().getDesktop().getWebApp().setAttribute(gameRoomName, this.gameRoom);
+        this.userName = this.txtName.getValue().trim();
+        if (this.rowCreateRoom.isVisible()) {
+            final String gameRoomName = Constants.GAMEROOM_PREFIX + this.txtGameRoom.getValue();
+            this.gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(gameRoomName);
+            if (this.gameRoom == null) {
+                this.gameRoom = new GameRoom(this.txtGameRoom.getValue());
+                this.getSelf().getDesktop().getWebApp().setAttribute(gameRoomName, this.gameRoom);
+                prepareGameroom();
+            } else {
+                alert("Ya existe una sala con el nombre indicado, ingresar otro nombre");
+            }
+        } else {
+            final String gameRoomName = Constants.GAMEROOM_PREFIX + this.cmbGameRoom.getValue();
+            this.gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(gameRoomName);
+            if (this.gameRoom != null) {
+                prepareGameroom();
+            }
         }
-        // if username is not already being used
-        if (this.gameRoom.getGameUser(this.userName) == null) {
-            // initialize
-            this.getSelf().getDesktop().enableServerPush(true);
+    }
 
-            this.gameUser = new GameUser(this.gameRoom, this.userName, this.getSelf().getDesktop());
-            // broadcast
-            this.gameRoom.broadcast(new GameMessage(this.userName + " se a unido al juego", this.gameUser));
-            this.gameUser.start();
-            LOGGER.info("User: " + this.gameUser.getUserName() + " --> " + this.gameUser.getName());
-            // set the MessageBoard to the session
-            this.gameBoard = new GameBoard(this.gameUser, this.gameRoom);
-            Sessions.getCurrent().setAttribute(Constants.GAMEBOARD_KEY, this.gameBoard);
-            // welcome message
-            final GameMessage msg = new GameMessage("Bienvenido al juego " + this.userName, this.gameUser);
-            // refresh UI
-            // displayChatGrid();
-            final Map<String, GameMessage> map = new HashMap<>();
-            map.put(Constants.INIT_MESSAGE, msg);
-            Executions.createComponents("tableGame.zul", /*this.getSelf().getPage(),*/ null, map);
-            //Executions.sendRedirect("tableGame.zul");
-            this.vboxMain.setVisible(false);
-            this.getSelf().detach();
-            // appendMessage(msg);
+    private void prepareGameroom()
+    {
+        if (this.gameRoom.getGameUser(this.userName) == null) {
+            if (!this.gameRoom.isInGame() || this.gameRoom.getResults().size() > 0) {
+                // initialize
+                this.getSelf().getDesktop().enableServerPush(true);
+
+                this.gameUser = new GameUser(this.gameRoom, this.userName, this.getSelf().getDesktop());
+                // broadcast
+                this.gameRoom.broadcast(new GameMessage(this.userName + " se a unido al juego", this.gameUser));
+                this.gameUser.start();
+                LOGGER.info("User: " + this.gameUser.getUserName() + " --> " + this.gameUser.getName());
+                // set the MessageBoard to the session
+                this.gameBoard = new GameBoard(this.gameUser, this.gameRoom);
+                Sessions.getCurrent().setAttribute(Constants.GAMEBOARD_KEY, this.gameBoard);
+                // welcome message
+                final GameMessage msg = new GameMessage("Bienvenido al juego " + this.userName, this.gameUser);
+                // refresh UI
+                // displayChatGrid();
+                final Map<String, GameMessage> map = new HashMap<>();
+                map.put(Constants.INIT_MESSAGE, msg);
+                Executions.createComponents("tableGame.zul", /*
+                                                              * this.getSelf().
+                                                              * getPage(),
+                                                              */ null, map);
+                // Executions.sendRedirect("tableGame.zul");
+                this.vboxMain.setVisible(false);
+                this.getSelf().detach();
+                // appendMessage(msg);
+            } else {
+                alert("El juego ya está en curso");
+            }
         } else {
             alert("El nombre de usuario se encuentra en uso, por favor escoger otro");
         }
     }
-    
+
     @Listen("onClick = #btnBack")
-    public void back() {
+    public void back()
+    {
         this.txtGameRoom.setVisible(true);
-        this.cmbGameRoom.setVisible(false);
         this.hboxButtons.setVisible(true);
         this.vboxLogin.setVisible(false);
     }
-    
-    private void buildGameRoomCombo() {
-        Map<String, Object> mapGameRooms = this.getSelf().getDesktop().getWebApp().getAttributes();
-        for (Entry<String, Object> entry : mapGameRooms.entrySet()) {
+
+    private void buildGameRoomCombo()
+    {
+        final Map<String, Object> mapGameRooms = this.getSelf().getDesktop().getWebApp().getAttributes();
+        for (final Entry<String, Object> entry : mapGameRooms.entrySet()) {
             if (entry.getKey().startsWith(Constants.GAMEROOM_PREFIX)) {
-                Comboitem item = new Comboitem();
+                final Comboitem item = new Comboitem();
                 item.setValue(entry.getValue());
                 item.setLabel(((GameRoom) entry.getValue()).getName());
                 this.cmbGameRoom.appendChild(item);
             }
         }
     }
-    
+
     @Listen("onClick = #btnCreateRoom")
-    public void createRoom() {
+    public void createRoom()
+    {
         this.rowCreateRoom.setVisible(true);
         this.rowJoinRoom.setVisible(false);
         this.hboxButtons.setVisible(false);
         this.vboxLogin.setVisible(true);
     }
-    
+
     @Listen("onClick = #btnJoinRoom")
-    public void joinRoom() {
+    public void joinRoom()
+    {
         this.rowCreateRoom.setVisible(false);
         this.rowJoinRoom.setVisible(true);
         this.hboxButtons.setVisible(false);

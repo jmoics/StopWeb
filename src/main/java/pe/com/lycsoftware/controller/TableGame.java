@@ -72,15 +72,17 @@ public class TableGame
         appendMessage(gameMessage);
         buildUserList();
     }
-    
-    private void buildUserList() {
-        for (GameUser user : this.gameBoard.getGameRoom().getGameUsers()) {
+
+    private void buildUserList()
+    {
+        for (final GameUser user : this.gameBoard.getGameRoom().getGameUsers()) {
             addUser2List(user);
         }
     }
-    
-    private void addUser2List(GameUser _user) {
-        Listitem item = new Listitem();
+
+    private void addUser2List(final GameUser _user)
+    {
+        final Listitem item = new Listitem();
         item.setValue(_user);
         Listcell cell = new Listcell(_user.getUserName());
         item.appendChild(cell);
@@ -90,19 +92,20 @@ public class TableGame
         item.appendChild(cell);
         this.lstGamers.appendChild(item);
     }
-    
-    private void updateUserStatus() {
-        for (Listitem itemUs : this.lstGamers.getItems()) {
-            Listcell cellUs = (Listcell) itemUs.getLastChild();
-            cellUs.setImage(!((GameUser) itemUs.getValue()).isLogout() ? 
-                    (((GameUser) itemUs.getValue()).isReady()  ? "/media/circle-green.png" : "/media/circle-orange.png")
-                    : "/media/circle-gray.png");
+
+    private void updateUserStatus()
+    {
+        for (final Listitem itemUs : this.lstGamers.getItems()) {
+            final Listcell cellUs = (Listcell) itemUs.getLastChild();
+            cellUs.setImage(!((GameUser) itemUs.getValue()).isLogout() ? (((GameUser) itemUs.getValue()).isReady()
+                            ? "/media/circle-green.png" : "/media/circle-orange.png")
+                            : "/media/circle-gray.png");
         }
     }
 
     private void saveGameBoard()
     {
-        synchronized(this) {
+        synchronized (this) {
             if (this.grdTableGame.getRows().getChildren().size() > 0) {
                 final Row row = (Row) this.grdTableGame.getRows().getLastChild();
                 final TableRow tabRow = new TableRow();
@@ -110,13 +113,15 @@ public class TableGame
                 for (final Component comp : row.getChildren()) {
                     if (comp instanceof Textbox) {
                         final Category cat = (Category) comp.getAttribute(Constants.CATEGORY_KEY);
-                        final TableCell cell = new TableCell(cat, ((Textbox) comp).getValue(), this.gameBoard.getGameUser());
+                        final TableCell cell = new TableCell(cat, ((Textbox) comp).getValue().trim(),
+                                        this.gameBoard.getGameUser());
                         tabRow.getCells().add(cell);
                     }
                 }
                 this.gameBoard.getTableGame().add(tabRow);
                 Map<GameUser, TableRow> map;
-                if (this.gameBoard.getGameRoom().getResults().size() < this.grdTableGame.getRows().getChildren().size()) {
+                if (this.gameBoard.getGameRoom().getResults().size() < this.grdTableGame.getRows().getChildren()
+                                .size()) {
                     map = new LinkedHashMap<>();
                     this.gameBoard.getGameRoom().getResults().add(map);
                 } else {
@@ -124,7 +129,7 @@ public class TableGame
                                     .get(this.gameBoard.getGameRoom().getResults().size() - 1);
                 }
                 map.put(this.gameBoard.getGameUser(),
-                         this.gameBoard.getTableGame().get(this.gameBoard.getTableGame().size() - 1));
+                                this.gameBoard.getTableGame().get(this.gameBoard.getTableGame().size() - 1));
             }
         }
     }
@@ -173,10 +178,10 @@ public class TableGame
         }
         final Window w = (Window) Executions.createComponents("tableResult.zul", null, dataArgs);
         w.setPage(this.getSelf().getPage());
-        //w.setParent(wEAT);
-        //w.doOverlapped();
+        // w.setParent(wEAT);
+        // w.doOverlapped();
         w.doModal();
-        //w.doEmbedded();
+        // w.doEmbedded();
     }
 
     /**
@@ -193,10 +198,15 @@ public class TableGame
         // if a user is entering or leaving chatroom
         switch (msg.getStatus()) {
             case Constants.START_GAME:
-                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" 
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]"
                                 + " --> processing start turn: " + msg.getContent());
-                this.gameBoard.getGameUser().setScore(this.gameBoard.getGameUser().getScore() 
+                this.gameBoard.getGameUser().setScore(this.gameBoard.getGameUser().getScore()
                                 + this.gameBoard.getGameUser().getScoreLastTurn());
+                if (this.grdTableGame.getRows().getChildren().size() > 1) {
+                    final Row rowPrev = (Row) this.grdTableGame.getRows().getChildren()
+                                    .get(this.grdTableGame.getRows().getChildren().size() - 2);
+                    ((Label) rowPrev.getLastChild()).setValue("" + this.gameBoard.getGameUser().getScoreLastTurn());
+                }
                 if (this.grdTableGame.getRows().getChildren().size() > 0) {
                     final Row row = (Row) this.grdTableGame.getRows().getLastChild();
                     for (final Component comp : row.getChildren()) {
@@ -212,7 +222,8 @@ public class TableGame
                 this.btnStop.setVisible(true);
                 break;
             case Constants.STOP_GAME:
-                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> processing end turn: " + msg.getContent());
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> processing end turn: "
+                                + msg.getContent());
                 this.btnStart.setVisible(true);
                 this.btnStop.setVisible(false);
                 if (this.grdTableGame.getRows().getChildren().size() > 0) {
@@ -230,15 +241,18 @@ public class TableGame
                 runWindowResult();
                 break;
             case Constants.JOIN_GAME:
-                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> joining game: " + msg.getContent());
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> joining game: "
+                                + msg.getContent());
                 addUser2List(msg.getSender());
                 break;
             case Constants.READY_GAME:
-                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user ready for game: " + msg.getContent());
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user ready for game: "
+                                + msg.getContent());
                 updateUserStatus();
                 break;
             case Constants.LOGOUT_GAME:
-                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user leave the game: " + msg.getContent());
+                LOGGER.info("[" + this.gameBoard.getGameUser().getUserName() + "]" + " --> user leave the game: "
+                                + msg.getContent());
                 break;
             default:
                 break;
@@ -247,7 +261,7 @@ public class TableGame
     }
 
     @Listen("onClick = #btnStart")
-    public void startGame(final MouseEvent _event)
+    public synchronized void startGame(final MouseEvent _event)
     {
         if (this.gameBoard.getGameRoom().checkReady4All() && !this.gameBoard.getGameRoom().isInGame()) {
             final GameMessage gameMessage = new GameMessage("Turno Iniciado",
@@ -261,16 +275,20 @@ public class TableGame
     }
 
     @Listen("onClick = #btnStop")
-    public void stopGame(final MouseEvent _event)
+    public synchronized void stopGame(final MouseEvent _event)
     {
-        final GameMessage gameMessage = new GameMessage("Turno Terminado",
-                        this.gameBoard.getGameUser(), Constants.STOP_GAME, null);
-        // GameRoom gameRoom = (GameRoom)
-        // this.getSelf().getDesktop().getWebApp().getAttribute(this.gameBoard.getGameRoom().getName());
-        // gameRoom.setReadyPlayers(false);
-        this.gameBoard.getGameRoom().setInGame(false);
-        this.gameBoard.getGameRoom().notReady4All();
-        this.gameBoard.getGameRoom().broadcastAll(gameMessage);
+        if (this.gameBoard.getGameRoom().isInGame()) {
+            final GameMessage gameMessage = new GameMessage("Turno Terminado",
+                            this.gameBoard.getGameUser(), Constants.STOP_GAME, null);
+            // GameRoom gameRoom = (GameRoom)
+            // this.getSelf().getDesktop().getWebApp().getAttribute(this.gameBoard.getGameRoom().getName());
+            // gameRoom.setReadyPlayers(false);
+            this.gameBoard.getGameRoom().setInGame(false);
+            this.gameBoard.getGameRoom().notReady4All();
+            this.gameBoard.getGameRoom().broadcastAll(gameMessage);
+        } else {
+            alert("El juego ya fue detenido");
+        }
     }
 
     @Listen("onClick = #btnLog")
@@ -292,28 +310,28 @@ public class TableGame
         }
         Executions.sendRedirect("index.zul");
     }
-    
-    public void finishGame() 
+
+    public void finishGame()
     {
-        this.getSelf().getDesktop().getWebApp().removeAttribute(Constants.GAMEROOM_PREFIX 
+        this.getSelf().getDesktop().getWebApp().removeAttribute(Constants.GAMEROOM_PREFIX
                         + this.gameBoard.getGameRoom().getName());
     }
 
     @Listen("onCheck = #chbReady")
     public void readyGame(final Event _event)
     {
-        if (((Checkbox)_event.getTarget()).isChecked()) {
+        if (((Checkbox) _event.getTarget()).isChecked()) {
             this.gameBoard.getGameUser().setReady(true);
-            final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " se encuentra listo",
+            final GameMessage gameMessage = new GameMessage(
+                            this.gameBoard.getGameUser().getUserName() + " se encuentra listo",
                             this.gameBoard.getGameUser(), Constants.READY_GAME, null);
-            this.gameBoard.getGameRoom().broadcast(gameMessage);
-            updateUserStatus();
+            this.gameBoard.getGameRoom().broadcastAll(gameMessage);
         } else {
             this.gameBoard.getGameUser().setReady(false);
-            final GameMessage gameMessage = new GameMessage(this.gameBoard.getGameUser().getUserName() + " no se encuentra listo",
+            final GameMessage gameMessage = new GameMessage(
+                            this.gameBoard.getGameUser().getUserName() + " no se encuentra listo",
                             this.gameBoard.getGameUser(), Constants.READY_GAME, null);
-            this.gameBoard.getGameRoom().broadcast(gameMessage);
-            updateUserStatus();
+            this.gameBoard.getGameRoom().broadcastAll(gameMessage);
         }
     }
 
