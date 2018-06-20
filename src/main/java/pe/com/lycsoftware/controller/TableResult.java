@@ -69,7 +69,7 @@ public class TableResult
             while (mapRes.size() < this.gameBoard.getGameRoom().getGameUsers().size()) {
                 try {
                     Thread.sleep(100);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -90,23 +90,23 @@ public class TableResult
                         tabcell.setStatus(Constants.CELL_LOSE);
                     }
                     if (mapCalc.containsKey(tabcell.getCat())) {
-                        TableColumn col = mapCalc.get(tabcell.getCat());
+                        final TableColumn col = mapCalc.get(tabcell.getCat());
                         if (!col.getCells().containsKey(entry.getKey())) {
                             col.getCells().put(entry.getKey(), tabcell);
                         }
                     } else {
-                        TableColumn col = new TableColumn();
+                        final TableColumn col = new TableColumn();
                         col.getCells().put(entry.getKey(), tabcell);
                         mapCalc.put(tabcell.getCat(), col);
                     }
                 }
             }
 
-            for (Entry<Category, TableColumn> entry : mapCalc.entrySet()) {
+            for (final Entry<Category, TableColumn> entry : mapCalc.entrySet()) {
                 entry.getValue().calculate();
             }
 
-            for (Entry<GameUser, TableRow> entry : mapRes.entrySet()) {
+            for (final Entry<GameUser, TableRow> entry : mapRes.entrySet()) {
                 entry.getValue().calculate();
                 entry.getKey().setScore(entry.getKey().getScore() + entry.getValue().getTotal());
             }
@@ -120,7 +120,7 @@ public class TableResult
             final Map<GameUser, TableRow> mapRes = this.gameBoard.getGameRoom().getResults()
                             .get(this.gameBoard.getGameRoom().getResults().size() - 1);
 
-            for (Entry<GameUser, TableRow> entry : mapRes.entrySet()) {
+            for (final Entry<GameUser, TableRow> entry : mapRes.entrySet()) {
                 entry.getValue().calculate();
                 entry.getKey().setScoreLastTurn(entry.getValue().getTotal());
             }
@@ -152,7 +152,7 @@ public class TableResult
             row.appendChild(label);
             for (final TableCell tabcell : entry.getValue().getCells()) {
                 if (entry.getKey().equals(this.gameBoard.getGameUser())) {
-                    Vbox vbox = new Vbox();
+                    final Vbox vbox = new Vbox();
                     label = new Label(tabcell.getData() == null
                                     || tabcell.getData().isEmpty()
                                     || tabcell.getData().length() == 1
@@ -162,7 +162,7 @@ public class TableResult
                     vbox.appendChild(label);
                     row.appendChild(vbox);
                 } else {
-                    Vbox vbox = new Vbox();
+                    final Vbox vbox = new Vbox();
                     vbox.setPack("center");
                     vbox.setHflex("1");
                     label = new Label(tabcell.getData() == null
@@ -180,33 +180,35 @@ public class TableResult
         }
     }
 
-    private void buildResultWithButtons(TableCell tabcell,
-                                        Vbox vbox)
+    private void buildResultWithButtons(final TableCell tabcell,
+                                        final Vbox vbox)
     {
-        Hbox hbox = new Hbox();
+        final Hbox hbox = new Hbox();
         hbox.setHflex("1");
-        Button btnLose = new Button();
+        final Button btnLose = new Button();
         btnLose.setStyle("padding-left: 2px; padding-right: 2px;");
+        btnLose.setSclass("mybutton button red small");
         btnLose.setLabel("" + Constants.CELL_LOSE);
         // btnLose.setImage("/media/error-16.png");
         btnLose.setHflex("1");
-        ;
         btnLose.setDisabled(Constants.CELL_LOSE.equals(tabcell.getStatus()));
         hbox.appendChild(btnLose);
-        Button btnDraw = new Button();
+
+        final Button btnDraw = new Button();
         btnDraw.setStyle("padding-left: 2px; padding-right: 2px;");
+        btnDraw.setSclass("mybutton button red small");
         btnDraw.setLabel("" + Constants.CELL_DRAW);
         // btnDraw.setImage("/media/draw-16.png");
         btnDraw.setHflex("1");
-        ;
         btnDraw.setDisabled(Constants.CELL_DRAW.equals(tabcell.getStatus()));
         hbox.appendChild(btnDraw);
-        Button btnWin = new Button();
+
+        final Button btnWin = new Button();
         btnWin.setStyle("padding-left: 2px; padding-right: 2px;");
+        btnWin.setSclass("mybutton button red small");
         btnWin.setLabel("" + Constants.CELL_WIN);
         // btnWin.setImage("/media/ok-16.png");
         btnWin.setHflex("1");
-        ;
         btnWin.setDisabled(Constants.CELL_WIN.equals(tabcell.getStatus()));
         hbox.appendChild(btnWin);
         vbox.appendChild(hbox);
@@ -214,116 +216,116 @@ public class TableResult
         {
 
             @Override
-            public void onEvent(Event _event)
+            public void onEvent(final Event _event)
                 throws Exception
             {
                 ((Button) _event.getTarget()).setDisabled(true);
                 btnDraw.setDisabled(false);
                 btnWin.setDisabled(false);
                 tabcell.setStatus(Constants.CELL_LOSE);
-                GameMessage msg = new GameMessage("", gameBoard.getGameUser(),
+                final GameMessage msg = new GameMessage("", TableResult.this.gameBoard.getGameUser(),
                                 Constants.RESULT_GAME, null);
-                gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                gameBoard.getGameRoom().broadcastResultAll(msg);
+                TableResult.this.gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                TableResult.this.gameBoard.getGameRoom().broadcastResultAll(msg);
             }
         });
         btnDraw.addEventListener(Events.ON_CLICK, new EventListener<Event>()
         {
 
             @Override
-            public void onEvent(Event _event)
+            public void onEvent(final Event _event)
                 throws Exception
             {
                 ((Button) _event.getTarget()).setDisabled(true);
                 btnLose.setDisabled(false);
                 btnWin.setDisabled(false);
                 tabcell.setStatus(Constants.CELL_DRAW);
-                GameMessage msg = new GameMessage("", gameBoard.getGameUser(),
+                final GameMessage msg = new GameMessage("", TableResult.this.gameBoard.getGameUser(),
                                 Constants.RESULT_GAME, null);
-                gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                gameBoard.getGameRoom().broadcastResultAll(msg);
+                TableResult.this.gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                TableResult.this.gameBoard.getGameRoom().broadcastResultAll(msg);
             }
         });
         btnWin.addEventListener(Events.ON_CLICK, new EventListener<Event>()
         {
 
             @Override
-            public void onEvent(Event _event)
+            public void onEvent(final Event _event)
                 throws Exception
             {
                 ((Button) _event.getTarget()).setDisabled(true);
                 btnDraw.setDisabled(false);
                 btnLose.setDisabled(false);
                 tabcell.setStatus(Constants.CELL_WIN);
-                GameMessage msg = new GameMessage("", gameBoard.getGameUser(),
+                final GameMessage msg = new GameMessage("", TableResult.this.gameBoard.getGameUser(),
                                 Constants.RESULT_GAME, null);
-                gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                gameBoard.getGameRoom().broadcastResultAll(msg);
+                TableResult.this.gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                TableResult.this.gameBoard.getGameRoom().broadcastResultAll(msg);
             }
         });
     }
 
-    private void buildResultsWithMenu(TableCell tabcell,
-                                      Vbox vbox)
+    private void buildResultsWithMenu(final TableCell tabcell,
+                                      final Vbox vbox)
     {
-        Menubar menubar = new Menubar();
-        Menu menuChoose = new Menu();
+        final Menubar menubar = new Menubar();
+        final Menu menuChoose = new Menu();
         menubar.appendChild(menuChoose);
-        Menupopup menupop = new Menupopup();
+        final Menupopup menupop = new Menupopup();
         menuChoose.appendChild(menupop);
         menuChoose.setLabel(String.valueOf(tabcell.getStatus()));
-        Menuitem itemLose = new Menuitem("" + Constants.CELL_LOSE);
+        final Menuitem itemLose = new Menuitem("" + Constants.CELL_LOSE);
         itemLose.setImage("/media/error-16.png");
         menuChoose.getMenupopup().appendChild(itemLose);
-        Menuitem itemDraw = new Menuitem("" + Constants.CELL_DRAW);
+        final Menuitem itemDraw = new Menuitem("" + Constants.CELL_DRAW);
         itemDraw.setImage("/media/draw-16.png");
         menuChoose.getMenupopup().appendChild(itemDraw);
-        Menuitem itemWin = new Menuitem("" + Constants.CELL_WIN);
+        final Menuitem itemWin = new Menuitem("" + Constants.CELL_WIN);
         itemWin.setImage("/media/ok-16.png");
         menuChoose.getMenupopup().appendChild(itemWin);
         itemLose.addEventListener(Events.ON_CLICK, new EventListener<Event>()
         {
 
             @Override
-            public void onEvent(Event _event)
+            public void onEvent(final Event _event)
                 throws Exception
             {
                 tabcell.setStatus(Constants.CELL_LOSE);
                 menuChoose.setLabel(String.valueOf(tabcell.getStatus()));
-                GameMessage msg = new GameMessage("", gameBoard.getGameUser(),
+                final GameMessage msg = new GameMessage("", TableResult.this.gameBoard.getGameUser(),
                                 Constants.RESULT_GAME, null);
-                gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                gameBoard.getGameRoom().broadcastResultAll(msg);
+                TableResult.this.gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                TableResult.this.gameBoard.getGameRoom().broadcastResultAll(msg);
             }
         });
         itemDraw.addEventListener(Events.ON_CLICK, new EventListener<Event>()
         {
 
             @Override
-            public void onEvent(Event _event)
+            public void onEvent(final Event _event)
                 throws Exception
             {
                 tabcell.setStatus(Constants.CELL_DRAW);
                 menuChoose.setLabel(String.valueOf(tabcell.getStatus()));
-                GameMessage msg = new GameMessage("", gameBoard.getGameUser(),
+                final GameMessage msg = new GameMessage("", TableResult.this.gameBoard.getGameUser(),
                                 Constants.RESULT_GAME, null);
-                gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                gameBoard.getGameRoom().broadcastResultAll(msg);
+                TableResult.this.gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                TableResult.this.gameBoard.getGameRoom().broadcastResultAll(msg);
             }
         });
         itemWin.addEventListener(Events.ON_CLICK, new EventListener<Event>()
         {
 
             @Override
-            public void onEvent(Event _event)
+            public void onEvent(final Event _event)
                 throws Exception
             {
                 tabcell.setStatus(Constants.CELL_WIN);
                 menuChoose.setLabel(String.valueOf(tabcell.getStatus()));
-                GameMessage msg = new GameMessage("", gameBoard.getGameUser(),
+                final GameMessage msg = new GameMessage("", TableResult.this.gameBoard.getGameUser(),
                                 Constants.RESULT_GAME, null);
-                gameBoard.getGameRoom().setLastUpdateCalculated(false);
-                gameBoard.getGameRoom().broadcastResultAll(msg);
+                TableResult.this.gameBoard.getGameRoom().setLastUpdateCalculated(false);
+                TableResult.this.gameBoard.getGameRoom().broadcastResultAll(msg);
             }
         });
         vbox.appendChild(menubar);

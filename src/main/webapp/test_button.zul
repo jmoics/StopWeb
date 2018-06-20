@@ -1,198 +1,6 @@
 <?page title="All Buttons" contentType="text/html;charset=UTF-8"?>
 <zk>
-    <style>
-        .GridLayoutNoBorder tr.z-row td.z-row-inner, tr.z-row
-        .z-cell,div.z-grid { 
-            border: none; 
-            overflow: hidden; 
-            zoom: 1;
-            background: white; 
-            border-top: none; 
-            border-left: none;
-            border-right: none; 
-            border-bottom: none; 
-        }
-
-        .btndiv .z-button-cr, .btndiv .z-button-cl, 
-        .btndiv .z-button-bl, .btndiv .z-button-bm,
-        .btndiv .z-button-br, .btndiv .z-button-tl,
-        .btndiv .z-button-tm, .btndiv .z-button-tr {
-            background-image: none;
-        }
-        
-        .btndiv .z-button-cm {
-            background : transparent url('') no-repeat 0 0 ;
-        }
-        .btndiv table {
-            width: 100%;
-            height: 100%;
-        }
-        .myGreen {
-            width: 110px;
-            height: 39px;
-            height: 37px\9;
-        }
-
-        .myGreen .z-button-cm {
-            height: 31px;
-            color: black;
-        }
-        
-        .myGreen .z-button-cm { background-image:url('img/button3.png');
-        } 
-        
-        .z-button-focus .z-button-cm {
-            background-position: 0 -62px                    
-        }
-        
-        .z-button-over .z-button-cm {
-            background-position: 0 -31px
-        }
-        
-        .z-button-clk .z-button-cm {
-            background-position: 0 -93px                    
-        }               
-        
-
-        .cw-notes-header-btn { 
-            color: white; 
-            font-family: Helvetica, Arial, Sans-Serif; font-size: 16px;
-            text-decoration: none; 
-            text-shadow: -1px -1px 1px #616161;
-            position: relative;
-
-            -webkit-box-shadow: 3px 3px 0 #9a9a9a; 
-            -moz-box-shadow: 3px 3px 0 #9a9a9a; 
-            -webkit-transition: all 0.3s ease; 
-            -moz-transition: all 0.3s ease; 
-            padding: 5px; 
-            background:#1F4D69; 
-        }
-
-        .cw-notes-header-btn:hover { 
-            -webkit-box-shadow: 0px 0px 0 #1F4D69; 
-            -moz-box-shadow: 0px 0px 0 #1F4D69; 
-            top: 1px; 
-            left:1px;
-            background:#656565; 
-        }
-
-        .rounded_corner { 
-            color: white; 
-            font-family: Helvetica, Arial, Sans-Serif; font-size: 16px;
-            text-decoration: none; 
-            text-shadow: -1px -1px 1px #616161;
-            position: relative;
-            
-            -webkit-border-radius: .5em; 
-            -moz-border-radius: .5em;
-            border-radius: .5em;    
-            -webkit-box-shadow: 3px 3px 0 #9a9a9a; 
-            -moz-box-shadow: 3px 3px 0 #9a9a9a; 
-            -webkit-transition: all 0.3s ease; 
-            -moz-transition: all 0.3s ease; 
-            padding: 5px; 
-            background:#1F4D69;
-        }
-
-        .rounded_corner:hover { 
-            -webkit-box-shadow: 0px 0px 0 #1F4D69; 
-            -moz-box-shadow: 0px 0px 0 #1F4D69; 
-            top: 1px; left:1px;
-            background:#656565; 
-        }
-        
-.mybutton.z-button .z-button-cm {
-    background-image: none;
-}
-
-.mybutton.z-button .z-button-tm, .z-button .z-button-bm {
-    background-image: none;
-}
-
-.mybutton.z-button .z-button-cl, .z-button .z-button-cr {
-    background-image: none;
-}
-
-.mybutton.z-button .z-button-tl {
-   background-image: none;
-}
-
-.mybutton.z-button .z-button-bl {
-   background-image: none;
-}
-
-.mybutton.z-button .z-button-tr {
-   background-image: none;
-}
-
-.mybutton.z-button .z-button-br {
-   background-image: none;
-}
-
-.button {
-    display: inline-block;
-    zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
-    *display: inline;
-    vertical-align: baseline;
-    margin: 0 2px;
-    outline: none;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    font: 14px/100% Arial, Helvetica, sans-serif;
-    padding: .5em 2em .55em;
-    text-shadow: 0 1px 1px rgba(0,0,0,.3);
-    -webkit-border-radius: .5em; 
-    -moz-border-radius: .5em;
-    border-radius: .5em;
-    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
-    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
-    box-shadow: 0 1px 2px rgba(0,0,0,.2);
-}
-.button:hover {
-    text-decoration: none;
-}
-.button:active {
-    position: relative;
-    top: 1px;
-}
-
-.bigrounded {
-    -webkit-border-radius: 2em;
-    -moz-border-radius: 2em;
-    border-radius: 2em;
-}
-.medium {
-    font-size: 12px;
-    padding: .4em 1.5em .42em;
-}
-.small {
-    font-size: 11px;
-    padding: .2em 1em .275em;
-}
-
-.green {
-    color: #e8f0de;
-    border: solid 1px #538312;
-    background: #64991e;
-    background: -webkit-gradient(linear, left top, left bottom, from(#7db72f), to(#4e7d0e));
-    background: -moz-linear-gradient(top,  #7db72f,  #4e7d0e);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#7db72f', endColorstr='#4e7d0e');
-}
-.green:hover {
-    background: #538018;
-    background: -webkit-gradient(linear, left top, left bottom, from(#6b9d28), to(#436b0c));
-    background: -moz-linear-gradient(top,  #6b9d28,  #436b0c);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#6b9d28', endColorstr='#436b0c');
-}
-.green:active {
-    color: #a9c08c;
-    background: -webkit-gradient(linear, left top, left bottom, from(#4e7d0e), to(#7db72f));
-    background: -moz-linear-gradient(top,  #4e7d0e,  #7db72f);
-    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#4e7d0e', endColorstr='#7db72f');
-}
-    </style>
+    <style src="buttons.css"/>
 
     <window title="All Buttons" border="normal">
         <grid width="450px" sclass="GridLayoutNoBorder">
@@ -229,19 +37,19 @@
                     <label value="Not using button component, Using anchor button. No Image used. Rounded corner" />
                 </row>
                 <row>
-                    <button mold="trendy" sclass="mybutton button green bigrounded" label="Submit" onClick="" />
+                    <button mold="trendy" sclass="mybutton button red bigrounded" label="Submit" onClick="" />
                     <label value="Trendy Mold. CSS Override" />
                 </row>
                 <row>
-                    <button mold="trendy" sclass="mybutton button green" label="Submit" onClick="" />
+                    <button mold="trendy" sclass="mybutton button red" label="Submit" onClick="" />
                     <label value="Trendy Mold. CSS Override" />
                 </row>
                 <row>
-                    <button mold="trendy" sclass="mybutton button green medium" label="Submit" onClick="" />
+                    <button mold="trendy" sclass="mybutton button red medium" label="Submit" onClick="" />
                     <label value="Trendy Mold. CSS Override" />
                 </row>
                 <row>
-                    <button mold="trendy" sclass="mybutton button green small" label="Submit" onClick="" />
+                    <button mold="trendy" sclass="mybutton button red small" label="Submit" onClick="" />
                     <label value="Trendy Mold. CSS Override" />
                 </row>
 

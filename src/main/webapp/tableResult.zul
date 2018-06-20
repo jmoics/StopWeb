@@ -2,6 +2,7 @@
 <window id="winTabRes" title="TableResult" 
     border="normal" width="95%" height="600px" closable="true"
     apply="pe.com.lycsoftware.controller.TableResult">
+    <style src="buttons.css"/>
     <grid id="grdTableResult">
         <columns></columns>
         <rows></rows>
