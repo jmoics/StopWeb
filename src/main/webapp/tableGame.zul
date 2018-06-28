@@ -34,14 +34,10 @@
         </east>
         <south vflex="1" hflex="1">
             <hbox style="margin-top: 5px; margin-bottom:5px; margin-left: 5px;" pack="center" align="center" hflex="1">
-                <button id="btnStart" label="Start">
-                </button>
-                <button id="btnStop" label="Stop" visible="false">
-                </button>
-                <button id="btnLog" label="Ver Log">
-                </button>
-                <button id="btnLogout" label="Logout">
-                </button>
+                <button id="btnStart" width="80px" height="60px" image="/media/play-48.png"/>
+                <button id="btnStop" width="80px" height="60px" image="/media/stop-48.png" visible="false"/>
+                <button id="btnLog" width="80px" height="60px" image="/media/log-48.png"/>
+                <button id="btnLogout" width="80px" height="60px" image="/media/back-48.png"/>
             </hbox>
         </south>
     </borderlayout>

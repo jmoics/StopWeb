@@ -7,6 +7,6 @@
         <columns></columns>
         <rows></rows>
     </grid>
-    <button id="btnRefresh" label="Refrescar"></button>
+    <button id="btnRefresh" image="/media/refresh-64.png"></button>
 </window>
 </zk>

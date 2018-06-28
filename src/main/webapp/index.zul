@@ -3,8 +3,8 @@
 <window border="none" apply="pe.com.lycsoftware.controller.IndexCtrl" width="100%" height="100%">
 <vbox id="vboxMain" align="center" pack="center" hflex="1" vflex="1">
     <hbox id="hboxButtons">
-        <button id="btnCreateRoom" label="Crear Sala" width="150px" height="80px"></button>
-        <button id="btnJoinRoom" label="Unirse a Sala" width="150px" height="80px"></button>
+        <button id="btnCreateRoom" label="Crear Sala" width="160px" height="150px" image="/media/create-128.png" orient="vertical" dir="reverse"/>
+        <button id="btnJoinRoom" label="Unirse a Sala" width="160px" height="150px" image="/media/join-128.png" orient="vertical" dir="reverse"/>
     </hbox>
     <vbox id="vboxLogin" visible="false">
         <grid id="loginGrid" fixedLayout="true" width="400px">
@@ -32,9 +32,9 @@
                 </row>
             </rows>
         </grid>
-        <hbox hflex="1" pack="end">
-            <button id="btnBack" label="Atrás" />
-            <button id="btnLogin" label="Entrar" />
+        <hbox hflex="1" pack="end" style="margin-top: 5px; margin-bottom:5px;">
+            <button id="btnBack" image="/media/back-48.png"/>
+            <button id="btnLogin" image="/media/enter-48.png"/>
         </hbox>
     </vbox>
 </vbox>
