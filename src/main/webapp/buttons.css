@@ -138,15 +138,15 @@
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    font: 14px/100% Arial, Helvetica, sans-serif;
+    font: 12px/100% Arial, Helvetica, sans-serif;
     padding: .5em 2em .55em;
     text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    border-radius: .5em;
     -webkit-border-radius: .5em;
     -moz-border-radius: .5em;
-    border-radius: .5em;
-    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
-    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 2px #000000;
+    -webkit-box-shadow: 0 1px 2px #000000;
+    -moz-box-shadow: 0 1px 2px #000000;
 }
 
 .button:hover {
@@ -198,13 +198,14 @@
 }
 
 .red {
-    color: #f2f2f2;
-    background: #ff1414;
-    background-image: -webkit-linear-gradient(top, #ff1414, #361010);
-    background-image: -moz-linear-gradient(top, #ff1414, #361010);
-    background-image: -ms-linear-gradient(top, #ff1414, #361010);
-    background-image: -o-linear-gradient(top, #ff1414, #361010);
-    background-image: linear-gradient(to bottom, #ff1414, #361010);
+    background: #ccc2c2; 
+    color : #f2f2f2; 
+    background-image : -webkit-linear-gradient( top, #ccc2c2, #6b6b6b);
+    background-image : -moz-linear-gradient( top, #ccc2c2, #6b6b6b); 
+    background-image : -ms-linear-gradient( top, #ccc2c2, #6b6b6b); 
+    background-image : -o-linear-gradient( top, #ccc2c2, #6b6b6b); 
+    background-image : linear-gradient( to bottom, #ccc2c2, #6b6b6b); 
+    border : solid #adadad 1px; 
     /*-webkit-border-radius: 12;
     -moz-border-radius: 12;
     border-radius: 12px;*/
@@ -215,15 +216,33 @@
     /*font-family: Arial;*/
     /*font-size: 20px;*/
     /*padding: 6px 15px 6px 15px;*/
-    border: solid #300707 1px;
     /*text-decoration: none;*/
 }
 
 .red:hover {
     background: #820404;
     text-decoration: none;
+    border : solid #5f0e0e 1px;
 }
-
+.red[disabled] {
+    background: #ff1414;
+    color: #f2f2f2;
+    background-image: -webkit-linear-gradient(top, #ff1414, #361010);
+    background-image: -moz-linear-gradient(top, #ff1414, #361010);
+    background-image: -ms-linear-gradient(top, #ff1414, #361010);
+    background-image: -o-linear-gradient(top, #ff1414, #361010);
+    background-image: linear-gradient(to bottom, #ff1414, #361010);
+    border: solid #5f0e0e 1px;
+    cursor: default;
+    opacity : .6;
+    filter: alpha(opacity = 60);
+    box-shadow: inset 0 0 2px #adadad; 
+    -webkit-box-shadow : inset 0 0 2px #adadad; 
+    -moz-box-shadow : inset 0 0 2px #adadad; 
+    -o-box-shadow : inset 0 0 2px #adadad; 
+    -ms-box-shadow : inset 0 0 2px #adadad
+}
+/*
 .red:active {
     background: #ccc2c2;
     background-image: -webkit-linear-gradient(top, #ccc2c2, #6b6b6b);
@@ -251,42 +270,4 @@
     -ms-box-shadow: inset 0 0 2px #adadad;
     box-shadow: inset 0 0 2px #adadad
 }
-
-.red[disabled] {
-    background: #ccc2c2; color : #f2f2f2; 
-    background-image : -webkit-linear-gradient( top, #ccc2c2, #6b6b6b);
-    background-image : -moz-linear-gradient( top, #ccc2c2, #6b6b6b); 
-    background-image : -ms-linear-gradient( top, #ccc2c2, #6b6b6b); 
-    background-image : -o-linear-gradient( top, #ccc2c2, #6b6b6b); 
-    background-image : linear-gradient( to bottom, #ccc2c2, #6b6b6b); 
-    border : solid #adadad 1px; 
-    border-color : #adadad; 
-    text-decoration : none; 
-    -webkit-box-shadow : inset 0 0 2px #adadad; 
-    -moz-box-shadow : inset 0 0 2px #adadad; 
-    -o-box-shadow : inset 0 0 2px #adadad; 
-    -ms-box-shadow : inset 0 0 2px #adadad;
-    box-shadow: inset 0 0 2px #adadad; 
-    opacity : .6;
-    filter: alpha(opacity = 60);
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    -o-box-shadow: none;
-    -ms-box-shadow: none;
-    box-shadow: none;
-    cursor: default;
-    color: #f2f2f2;
-    background-image: -webkit-linear-gradient(top, #ccc2c2, #6b6b6b);
-    background-image: -moz-linear-gradient(top, #ccc2c2, #6b6b6b);
-    background-image: -ms-linear-gradient(top, #ccc2c2, #6b6b6b);
-    background-image: -o-linear-gradient(top, #ccc2c2, #6b6b6b);
-    background-image: linear-gradient(to bottom, #ccc2c2, #6b6b6b);
-    border: solid #adadad 1px;
-    border-color: #adadad;
-    text-decoration: none;
-    -webkit-box-shadow: inset 0 0 2px #adadad;
-    -moz-box-shadow: inset 0 0 2px #adadad;
-    -o-box-shadow: inset 0 0 2px #adadad;
-    -ms-box-shadow: inset 0 0 2px #adadad; 
-    box-shadow : inset 0 0 2px #adadad;
-    opacity: .6;
+*/

@@ -186,7 +186,7 @@ public class TableResult
         final Hbox hbox = new Hbox();
         hbox.setHflex("1");
         final Button btnLose = new Button();
-        btnLose.setStyle("padding-left: 2px; padding-right: 2px;");
+        // btnLose.setStyle("padding-left: 2px; padding-right: 2px;");
         btnLose.setSclass("mybutton button red small");
         btnLose.setLabel("" + Constants.CELL_LOSE);
         // btnLose.setImage("/media/error-16.png");
@@ -195,7 +195,7 @@ public class TableResult
         hbox.appendChild(btnLose);
 
         final Button btnDraw = new Button();
-        btnDraw.setStyle("padding-left: 2px; padding-right: 2px;");
+        // btnDraw.setStyle("padding-left: 2px; padding-right: 2px;");
         btnDraw.setSclass("mybutton button red small");
         btnDraw.setLabel("" + Constants.CELL_DRAW);
         // btnDraw.setImage("/media/draw-16.png");
@@ -204,7 +204,7 @@ public class TableResult
         hbox.appendChild(btnDraw);
 
         final Button btnWin = new Button();
-        btnWin.setStyle("padding-left: 2px; padding-right: 2px;");
+        // btnWin.setStyle("padding-left: 2px; padding-right: 2px;");
         btnWin.setSclass("mybutton button red small");
         btnWin.setLabel("" + Constants.CELL_WIN);
         // btnWin.setImage("/media/ok-16.png");
