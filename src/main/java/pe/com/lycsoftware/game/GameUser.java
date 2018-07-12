@@ -15,6 +15,7 @@ import pe.com.lycsoftware.util.Constants;
 public class GameUser
     extends Thread
 {
+
     /**
      *
      */
@@ -30,6 +31,22 @@ public class GameUser
     private boolean ready;
     // private boolean endTurn;
     private GameMessage gameMessage;
+    private boolean admin;
+
+    public GameUser(final GameRoom _gameRoom,
+                    final String _userName,
+                    final Desktop _desktop,
+                    final boolean _admin)
+    {
+        this.userName = _userName;
+        this.gameRoom = _gameRoom;
+        this.desktop = _desktop;
+        this.gameMessage = null;
+        this.gameRoom.add(this);
+        this.score = 0;
+        this.scoreLastTurn = 0;
+        this.admin = _admin;
+    }
 
     public GameUser(final GameRoom _gameRoom,
                     final String _userName,
@@ -50,8 +67,9 @@ public class GameUser
     @Override
     public void run()
     {
-        if (!this.desktop.isServerPushEnabled())
+        if (!this.desktop.isServerPushEnabled()) {
             this.desktop.enableServerPush(true);
+        }
         LOGGER.info("Active chatUser thread: " + getName());
         // try {
         while (!this.finishGame || !this.logout) {
@@ -96,7 +114,7 @@ public class GameUser
         Events.postEvent(new Event("onBroadcast", null, this.gameMessage));
         this.gameMessage = null;
     }
-    
+
     private void processResult()
         throws Exception
     {
@@ -109,7 +127,7 @@ public class GameUser
         LOGGER.info(getUserName() + " has logged out of the gameroom!");
         this.gameRoom.remove(this);
         this.gameMessage = null;
-        if (desktop.isServerPushEnabled()) {
+        if (this.desktop.isServerPushEnabled()) {
             Executions.getCurrent().getDesktop().enableServerPush(false);
         }
         this.logout = true;
@@ -117,12 +135,12 @@ public class GameUser
 
     public String getUserName()
     {
-        return userName;
+        return this.userName;
     }
 
     public Integer getScore()
     {
-        return score;
+        return this.score;
     }
 
     public void setScore(final Integer score)
@@ -132,12 +150,12 @@ public class GameUser
 
     public GameRoom getGameRoom()
     {
-        return gameRoom;
+        return this.gameRoom;
     }
 
     public Desktop getDesktop()
     {
-        return desktop;
+        return this.desktop;
     }
 
     public void addGameMessage(final GameMessage gameMessage)
@@ -147,31 +165,37 @@ public class GameUser
 
     public boolean isReady()
     {
-        return ready;
+        return this.ready;
     }
 
     public void setReady(final boolean ready)
     {
         this.ready = ready;
     }
-    
+
     public boolean isLogout()
     {
-        return logout;
+        return this.logout;
     }
-    
-    public void setLogout(boolean logout)
+
+    public void setLogout(final boolean logout)
     {
         this.logout = logout;
     }
 
     public Integer getScoreLastTurn()
     {
-        return scoreLastTurn;
+        return this.scoreLastTurn;
     }
-    
-    public void setScoreLastTurn(Integer scoreLastTurn)
+
+    public void setScoreLastTurn(final Integer scoreLastTurn)
     {
         this.scoreLastTurn = scoreLastTurn;
     }
+
+    public boolean isAdmin()
+    {
+        return this.admin;
+    }
+
 }

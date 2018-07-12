@@ -151,27 +151,52 @@ public class TableResult
             Label label = new Label(entry.getKey().getUserName());
             row.appendChild(label);
             for (final TableCell tabcell : entry.getValue().getCells()) {
-                if (entry.getKey().equals(this.gameBoard.getGameUser())) {
-                    final Vbox vbox = new Vbox();
-                    label = new Label(tabcell.getData() == null
-                                    || tabcell.getData().isEmpty()
-                                    || tabcell.getData().length() == 1
-                                                    ? " - " : tabcell.getData());
-                    vbox.appendChild(label);
-                    label = new Label("" + tabcell.getStatus());
-                    vbox.appendChild(label);
-                    row.appendChild(vbox);
+                if (Constants.REVIEW_TYPE_ADMIN.equals(this.gameBoard.getGameRoom().getReviewType())) {
+                    if (!this.gameBoard.getGameUser().isAdmin()) {
+                        final Vbox vbox = new Vbox();
+                        label = new Label(tabcell.getData() == null
+                                        || tabcell.getData().isEmpty()
+                                        || tabcell.getData().length() == 1
+                                                        ? " - " : tabcell.getData());
+                        vbox.appendChild(label);
+                        label = new Label("" + tabcell.getStatus());
+                        vbox.appendChild(label);
+                        row.appendChild(vbox);
+                    } else {
+                        final Vbox vbox = new Vbox();
+                        vbox.setPack("center");
+                        vbox.setHflex("1");
+                        label = new Label(tabcell.getData() == null
+                                        || tabcell.getData().isEmpty()
+                                        || tabcell.getData().length() == 1
+                                                        ? " - " : tabcell.getData());
+                        vbox.appendChild(label);
+                        buildResultWithButtons(tabcell, vbox);
+                        row.appendChild(vbox);
+                    }
                 } else {
-                    final Vbox vbox = new Vbox();
-                    vbox.setPack("center");
-                    vbox.setHflex("1");
-                    label = new Label(tabcell.getData() == null
-                                    || tabcell.getData().isEmpty()
-                                    || tabcell.getData().length() == 1
-                                                    ? " - " : tabcell.getData());
-                    vbox.appendChild(label);
-                    buildResultWithButtons(tabcell, vbox);
-                    row.appendChild(vbox);
+                    if (entry.getKey().equals(this.gameBoard.getGameUser())) {
+                        final Vbox vbox = new Vbox();
+                        label = new Label(tabcell.getData() == null
+                                        || tabcell.getData().isEmpty()
+                                        || tabcell.getData().length() == 1
+                                                        ? " - " : tabcell.getData());
+                        vbox.appendChild(label);
+                        label = new Label("" + tabcell.getStatus());
+                        vbox.appendChild(label);
+                        row.appendChild(vbox);
+                    } else {
+                        final Vbox vbox = new Vbox();
+                        vbox.setPack("center");
+                        vbox.setHflex("1");
+                        label = new Label(tabcell.getData() == null
+                                        || tabcell.getData().isEmpty()
+                                        || tabcell.getData().length() == 1
+                                                        ? " - " : tabcell.getData());
+                        vbox.appendChild(label);
+                        buildResultWithButtons(tabcell, vbox);
+                        row.appendChild(vbox);
+                    }
                 }
             }
             label = new Label("" + entry.getValue().getTotal());

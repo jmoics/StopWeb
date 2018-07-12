@@ -18,11 +18,14 @@ public class GameRoom
     private final List<Map<Category, TableColumn>> resultsCalc;
     private boolean inGame;
     private boolean lastTurnCalculated;
-    private boolean lastUpdateCalculated;;
+    private boolean lastUpdateCalculated;
+    private final String reviewType;
 
-    public GameRoom(final String _name)
+    public GameRoom(final String _name,
+                    final String _reviewType)
     {
         this.name = _name;
+        this.reviewType = _reviewType;
         this.gameUsers = new ArrayList<>();
         this.results = new LinkedList<>();
         this.resultsCalc = new LinkedList<>();
@@ -36,10 +39,11 @@ public class GameRoom
     public void broadcast(final GameMessage msg)
     {
         synchronized (this.gameUsers) {
-            for (final GameUser gameUser : this.gameUsers)
+            for (final GameUser gameUser : this.gameUsers) {
                 if (gameUser.getUserName().compareTo(msg.getSender().getUserName()) != 0) {
                     gameUser.addGameMessage(msg);
                 }
+            }
         }
     }
 
@@ -51,7 +55,7 @@ public class GameRoom
             }
         }
     }
-    
+
     public void broadcastResult(final GameMessage msg)
     {
         synchronized (this.gameUsers) {
@@ -62,7 +66,7 @@ public class GameRoom
             }
         }
     }
-    
+
     public void broadcastResultAll(final GameMessage msg)
     {
         synchronized (this.gameUsers) {
@@ -82,7 +86,7 @@ public class GameRoom
         }
         return ret;
     }
-    
+
     public void notReady4All()
     {
         synchronized (this.gameUsers) {
@@ -94,7 +98,7 @@ public class GameRoom
 
     public String getName()
     {
-        return name;
+        return this.name;
     }
 
     /**
@@ -116,12 +120,13 @@ public class GameRoom
     public GameUser getGameUser(final String _username)
     {
         GameUser cu = null;
-        synchronized (gameUsers) {
-            for (final GameUser gameUser : gameUsers)
+        synchronized (this.gameUsers) {
+            for (final GameUser gameUser : this.gameUsers) {
                 if (gameUser.getUserName().compareTo(_username) == 0) {
                     cu = gameUser;
                     break;
                 }
+            }
         }
         return cu;
     }
@@ -133,8 +138,8 @@ public class GameRoom
      */
     public void add(final GameUser gameUser)
     {
-        synchronized (gameUsers) {
-            gameUsers.add(gameUser);
+        synchronized (this.gameUsers) {
+            this.gameUsers.add(gameUser);
         }
     }
 
@@ -145,8 +150,8 @@ public class GameRoom
      */
     public void remove(final GameUser gameUser)
     {
-        synchronized (gameUsers) {
-            gameUsers.remove(gameUser);
+        synchronized (this.gameUsers) {
+            this.gameUsers.remove(gameUser);
         }
     }
 
@@ -157,48 +162,54 @@ public class GameRoom
      */
     public void remove(final String nickname)
     {
-        synchronized (gameUsers) {
-            gameUsers.remove(getGameUser(nickname));
+        synchronized (this.gameUsers) {
+            this.gameUsers.remove(getGameUser(nickname));
         }
     }
-    
+
     public boolean isInGame()
     {
-        return inGame;
+        return this.inGame;
     }
-    
-    public void setInGame(boolean inGame)
+
+    public void setInGame(final boolean inGame)
     {
         this.inGame = inGame;
     }
-    
+
     public List<Map<GameUser, TableRow>> getResults()
     {
         return this.results;
     }
-    
+
     public List<Map<Category, TableColumn>> getResultsCalc()
     {
-        return resultsCalc;
+        return this.resultsCalc;
     }
-    
+
     public boolean isLastTurnCalculated()
     {
-        return lastTurnCalculated;
+        return this.lastTurnCalculated;
     }
-    
-    public void setLastTurnCalculated(boolean lastTurnCalculated)
+
+    public void setLastTurnCalculated(final boolean lastTurnCalculated)
     {
         this.lastTurnCalculated = lastTurnCalculated;
     }
-    
+
     public boolean isLastUpdateCalculated()
     {
-        return lastUpdateCalculated;
+        return this.lastUpdateCalculated;
     }
-    
-    public void setLastUpdateCalculated(boolean lastUpdateCalculated)
+
+    public void setLastUpdateCalculated(final boolean lastUpdateCalculated)
     {
         this.lastUpdateCalculated = lastUpdateCalculated;
     }
+
+    public String getReviewType()
+    {
+        return this.reviewType;
+    }
+
 }

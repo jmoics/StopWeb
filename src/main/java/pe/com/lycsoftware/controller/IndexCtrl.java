@@ -69,9 +69,10 @@ public class IndexCtrl
             final String gameRoomName = Constants.GAMEROOM_PREFIX + this.txtGameRoom.getValue();
             this.gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(gameRoomName);
             if (this.gameRoom == null) {
-                this.gameRoom = new GameRoom(this.txtGameRoom.getValue());
+                // TODO: agregar combo al crear la sala para tipo de corrección
+                this.gameRoom = new GameRoom(this.txtGameRoom.getValue(), Constants.REVIEW_TYPE_ADMIN);
                 this.getSelf().getDesktop().getWebApp().setAttribute(gameRoomName, this.gameRoom);
-                prepareGameroom();
+                prepareGameroom(true);
             } else {
                 alert("Ya existe una sala con el nombre indicado, ingresar otro nombre");
             }
@@ -79,19 +80,20 @@ public class IndexCtrl
             final String gameRoomName = Constants.GAMEROOM_PREFIX + this.cmbGameRoom.getValue();
             this.gameRoom = (GameRoom) this.getSelf().getDesktop().getWebApp().getAttribute(gameRoomName);
             if (this.gameRoom != null) {
-                prepareGameroom();
+                prepareGameroom(false);
             }
         }
     }
 
-    private void prepareGameroom()
+    private void prepareGameroom(final boolean _create)
     {
         if (this.gameRoom.getGameUser(this.userName) == null) {
             if (!this.gameRoom.isInGame() || this.gameRoom.getResults().size() > 0) {
                 // initialize
                 this.getSelf().getDesktop().enableServerPush(true);
 
-                this.gameUser = new GameUser(this.gameRoom, this.userName, this.getSelf().getDesktop());
+                this.gameUser = _create ? new GameUser(this.gameRoom, this.userName, this.getSelf().getDesktop(), true)
+                                : new GameUser(this.gameRoom, this.userName, this.getSelf().getDesktop());
                 // broadcast
                 this.gameRoom.broadcast(new GameMessage(this.userName + " se a unido al juego", this.gameUser));
                 this.gameUser.start();
